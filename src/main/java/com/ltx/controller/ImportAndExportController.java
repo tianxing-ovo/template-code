@@ -8,6 +8,7 @@ import com.ltx.entity.po.User;
 import com.ltx.entity.request.ExportRequestBody;
 import com.ltx.mapper.UserMapper;
 import com.ltx.service.ExportTaskService;
+import com.ltx.util.UserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,7 +81,9 @@ public class ImportAndExportController {
      */
     @PostMapping("/export-to-local")
     public void asyncExport(@RequestBody ExportRequestBody requestBody) {
-        exportService.asyncExport(requestBody);
+        // 在主线程中提前获取userId(避免异步线程中ThreadLocal为空)
+        Integer userId = UserContext.get().getId();
+        exportService.asyncExport(requestBody, userId);
     }
 
     /**

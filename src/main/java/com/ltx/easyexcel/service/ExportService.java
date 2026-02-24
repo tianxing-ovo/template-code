@@ -9,7 +9,6 @@ import com.ltx.entity.po.User;
 import com.ltx.entity.request.ExportRequestBody;
 import com.ltx.mapper.ExportTaskMapper;
 import com.ltx.mapper.UserMapper;
-import com.ltx.util.UserContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +42,8 @@ public class ExportService {
      * @param clazz       数据类型
      */
     @SneakyThrows
-    public <T> void export(HttpServletResponse response, List<T> list, ExportRequestBody requestBody, Class<T> clazz, ExcelTypeEnum excelType) {
+    public <T> void export(HttpServletResponse response, List<T> list, ExportRequestBody requestBody, Class<T> clazz,
+            ExcelTypeEnum excelType) {
         String fileName = requestBody.getFileName();
         List<String> fieldList = requestBody.getFieldList();
         response.setContentType("text/csv;charset=UTF-8");
@@ -75,10 +75,10 @@ public class ExportService {
      * 异步导出CSV文件到本地
      *
      * @param requestBody 请求体
+     * @param userId      用户id
      */
     @Async
-    public void asyncExport(ExportRequestBody requestBody) {
-        Integer userId = UserContext.get().getId();
+    public void asyncExport(ExportRequestBody requestBody, Integer userId) {
         String fileName = String.format("%s-%d-%d", requestBody.getFileName(), userId, System.currentTimeMillis());
         // 插入导出任务
         exportTaskMapper.insertExportTask(userId, fileName);
@@ -88,4 +88,3 @@ public class ExportService {
         exportTaskMapper.updateExportStatus(userId, fileName);
     }
 }
-
