@@ -15,8 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 /**
- * 切面类
- * order值小的切面先执行
+ * 切面类(order值小的切面先执行)
  *
  * @author tianxing
  */
@@ -75,6 +74,8 @@ public class UserAop {
 
     /**
      * 返回通知: 在目标方法返回结果后执行(方法有返回值时使用)
+     *
+     * @param user 目标方法的返回值
      */
     @AfterReturning(value = "pointcut()", returning = "user")
     public void afterReturning(User user) {
@@ -85,6 +86,8 @@ public class UserAop {
 
     /**
      * 异常通知: 在目标方法抛出异常后执行
+     *
+     * @param ex 异常对象
      */
     @AfterThrowing(value = "pointcut()", throwing = "ex")
     public void afterThrowing(Exception ex) {
@@ -94,16 +97,19 @@ public class UserAop {
 
     /**
      * 环绕通知: 在目标方法执行前后都执行
+     *
+     * @param joinPoint 连接点
+     * @return 目标方法的返回值
      */
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         // 执行目标方法之前的操作
         System.out.println("Before Around AOP: " + joinPoint.getSignature().getName());
         // 执行目标方法并获取返回值
-        Object o = joinPoint.proceed();
+        Object result = joinPoint.proceed();
         // 执行目标方法之后的操作
         System.out.println("After Around AOP: " + joinPoint.getSignature().getName());
         // 返回结果
-        return o;
+        return result;
     }
 }

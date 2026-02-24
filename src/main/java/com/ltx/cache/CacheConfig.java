@@ -14,13 +14,20 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * 缓存配置
  *
+ *
  * @author tianxing
  */
-@EnableConfigurationProperties(CacheProperties.class) // 加载缓存配置类
+@EnableConfigurationProperties(CacheProperties.class)
 @Configuration
-@EnableCaching  // 开启缓存注解功能
+@EnableCaching
 public class CacheConfig {
 
+    /**
+     * 自定义Redis缓存配置
+     *
+     * @param cacheProperties 缓存配置属性
+     * @return Redis缓存配置
+     */
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration(CacheProperties cacheProperties) {
         // 获取默认配置
