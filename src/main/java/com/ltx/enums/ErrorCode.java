@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum ErrorCodeEnum {
+public enum ErrorCode {
     UNAUTHORIZED(201, "权限不足"),
     LOGIN_FAILED(202, "登录失败"),
     TOKEN_IS_NULL(203, "token为空"),
@@ -27,9 +27,9 @@ public enum ErrorCodeEnum {
      * @return 提示信息
      */
     public static String getMessageByCode(int code) {
-        for (ErrorCodeEnum errorCodeEnum : values()) {
-            if (errorCodeEnum.code == code) {
-                return errorCodeEnum.message;
+        for (ErrorCode errorCode : values()) {
+            if (errorCode.code == code) {
+                return errorCode.message;
             }
         }
         return "";

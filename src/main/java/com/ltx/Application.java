@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Indexed;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * proxyTargetClass = true -> 使用cglib代理(继承)
@@ -20,11 +20,11 @@ import javax.annotation.PostConstruct;
  *
  * @author tianxing
  */
-@EnableScheduling // 启用Spring定时任务
-@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true) // 启用AspectJ自动代理
+@EnableScheduling
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @SpringBootApplication
-@EnableRedisHttpSession // 使用Redis存储session
-@EnableAsync  // 启用异步方法调用
+@EnableRedisHttpSession
+@EnableAsync
 @EnableRabbit
 @MapperScan("com.ltx.mapper")
 @Indexed

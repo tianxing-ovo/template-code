@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User监听器 -> 用于处理读取的Excel数据
+ * 用户监听器
  *
  * @author tianxing
  */
@@ -17,7 +17,7 @@ public class UserListener extends AnalysisEventListener<User> {
     private final List<User> list = new ArrayList<>();
 
     /**
-     * 一个一个读取 -> 处理读取的数据 -> 可以将数据存储到数据库 -> 进行业务逻辑处理
+     * 处理读取到的用户数据
      *
      * @param user            用户
      * @param analysisContext 分析上下文
@@ -29,6 +29,8 @@ public class UserListener extends AnalysisEventListener<User> {
 
     /**
      * 数据读取完成后的处理
+     * 
+     * @param analysisContext 分析上下文
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {

@@ -45,7 +45,7 @@ public class UploadAndDownloadController {
      * @param file 文件
      * @return 通用响应对象
      */
-    @PostMapping("/single-upload")
+    @PostMapping("/files/upload")
     public Result uploadFile(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
             String fileName = getSecureFileName(file.getOriginalFilename());
@@ -65,7 +65,7 @@ public class UploadAndDownloadController {
      * @param files 文件数组
      * @return 通用响应对象
      */
-    @PostMapping("/multiple-upload")
+    @PostMapping("/files/batch-upload")
     public Result uploadFiles(@RequestParam("files") MultipartFile[] files) {
         // 成功的消息
         List<String> successMessageList = new ArrayList<>();
@@ -97,7 +97,7 @@ public class UploadAndDownloadController {
      * @return 响应实体
      */
     @SneakyThrows
-    @GetMapping("/download/{fileName}")
+    @GetMapping("/files/{fileName:.+}")
     public ResponseEntity<?> download(@PathVariable String fileName) {
         fileName = getSecureFileName(fileName);
         FileSystemResource resource = new FileSystemResource(Constant.DESKTOP_PATH.resolve(fileName));

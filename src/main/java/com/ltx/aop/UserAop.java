@@ -2,7 +2,8 @@ package com.ltx.aop;
 
 import com.ltx.annotation.PreAuthorize;
 import com.ltx.entity.po.User;
-import com.ltx.enums.ErrorCodeEnum;
+import com.ltx.enums.ErrorCode;
+import com.ltx.enums.Role;
 import com.ltx.exception.CustomException;
 import com.ltx.util.UserContext;
 import lombok.extern.slf4j.Slf4j;
@@ -55,12 +56,12 @@ public class UserAop {
         // 获取注解中的角色数组
         String[] roles = preAuthorize.hasAnyRole();
         // 获取用户角色
-        String role = args[0].toString();
+        Role role = (Role) args[0];
         // 设置用户角色
         UserContext.get().setRole(role);
         // 判断用户角色是否在注解指定的角色中
-        if (!Arrays.asList(roles).contains(role)) {
-            throw new CustomException(ErrorCodeEnum.UNAUTHORIZED);
+        if (!Arrays.asList(roles).contains(role.getValue())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
     }
 

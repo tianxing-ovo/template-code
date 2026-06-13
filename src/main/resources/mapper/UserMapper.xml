@@ -2,13 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ltx.mapper.UserMapper">
-    <!--json对应List-->
-    <resultMap id="userMap" type="User">
-        <result column="password" property="password"
-                javaType="java.util.List"
-                jdbcType="OTHER"
-                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
-    </resultMap>
+    <!-- password 字段的 JSON 转换现在已通过 User 实体类上的 MyBatis-Plus 注解进行全局配置，去除了冗余的手写 resultMap -->
     <insert id="add">
         insert into user (id, name, age, password, sex, province, address, city, description, my_datetime, my_date)
         values (#{user.id}, #{user.name}, #{user.age},
@@ -18,7 +12,7 @@
         </foreach>), #{user.sex}, #{user.province},
         #{user.address}, #{user.city}, #{user.description}, #{user.datetime}, #{user.date})
     </insert>
-    <select id="query" resultMap="userMap">
+    <select id="query" resultType="User">
         select * from user
         where my_date >= #{requestBody.startDate} and date(my_datetime)>= #{requestBody.startDate}
         and my_date&lt;=#{requestBody.endDate}
@@ -57,13 +51,5 @@
             </if>
         </where>
     </select>
-    <select id="select" resultMap="userMap">
-        select *
-        from user
-        limit 10 offset 0
-    </select>
-    <select id="selectAll" resultMap="userMap">
-        select *
-        from user
-    </select>
+
 </mapper>

@@ -13,10 +13,6 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    List<User> select();
-
-    List<User> selectAll();
-
     List<User> query(@Param("requestBody") UserRequestBody requestBody);
 
     List<User> queryUserList(@Param("requestBody") UserRequestBody requestBody);

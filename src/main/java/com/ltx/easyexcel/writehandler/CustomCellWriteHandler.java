@@ -2,7 +2,7 @@ package com.ltx.easyexcel.writehandler;
 
 import com.alibaba.excel.write.handler.CellWriteHandler;
 import com.alibaba.excel.write.handler.context.CellWriteHandlerContext;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -25,7 +25,7 @@ public class CustomCellWriteHandler implements CellWriteHandler {
     public void afterCellDispose(CellWriteHandlerContext context) {
         Cell cell = context.getCell();
         CellType cellType = cell.getCellType();
-        if ((cellType == CellType.STRING && StringUtils.isBlank(cell.getStringCellValue()))
+        if ((cellType == CellType.STRING && StrUtil.isBlank(cell.getStringCellValue()))
                 || cellType == CellType.BLANK || cellType == CellType._NONE) {
             cell.setCellValue("--");
         }

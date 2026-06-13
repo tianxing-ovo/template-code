@@ -1,15 +1,15 @@
 package com.ltx.entity.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ltx.enums.SexEnum;
+import com.ltx.enums.Sex;
 import com.ltx.valid.InsertGroup;
 import com.ltx.valid.ListValue;
 import com.ltx.valid.UpdateGroup;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.*;
-import java.sql.Date;
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ public class UserRequestBody {
     @ListValue(values = {1, 2}, groups = {InsertGroup.class})
     private Integer status;
 
-    private SexEnum sex;
+    private Sex sex;
 
     private List<String> password;
 
@@ -51,8 +51,8 @@ public class UserRequestBody {
     private String description;
 
     @JsonProperty("start_date")
-    private Date startDate;
+    private LocalDate startDate;
 
     @JsonProperty("end_date")
-    private Date endDate;
+    private LocalDate endDate;
 }

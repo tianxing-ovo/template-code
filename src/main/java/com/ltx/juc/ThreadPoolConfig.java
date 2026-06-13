@@ -1,7 +1,7 @@
 package com.ltx.juc;
 
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
-import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -48,7 +48,7 @@ public class ThreadPoolConfig {
     @Bean("taskExecutor")
     public ThreadPoolTaskExecutor taskExecutor(TaskExecutionProperties properties) {
         TaskExecutionProperties.Pool pool = properties.getPool();
-        return new TaskExecutorBuilder()
+        return new ThreadPoolTaskExecutorBuilder()
                 .corePoolSize(pool.getCoreSize())
                 .maxPoolSize(pool.getMaxSize())
                 .keepAlive(pool.getKeepAlive())

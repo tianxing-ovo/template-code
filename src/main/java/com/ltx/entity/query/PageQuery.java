@@ -3,7 +3,7 @@ package com.ltx.entity.query;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * 分页查询实体
@@ -29,9 +29,9 @@ public class PageQuery {
      */
     public Page<?> toPage(OrderItem... items) {
         Page<?> page = Page.of(pageNum, pageSize);
-        if (StringUtils.isNotBlank(sortField)) {
+        if (StrUtil.isNotBlank(sortField)) {
             boolean asc = "asc".equalsIgnoreCase(sortOrder);
-            page.addOrder(new OrderItem(sortField, asc));
+            page.addOrder(asc ? OrderItem.asc(sortField) : OrderItem.desc(sortField));
         } else if (items != null) {
             // 默认排序
             page.addOrder(items);
@@ -47,6 +47,6 @@ public class PageQuery {
      * @return 分页对象
      */
     public Page<?> toPage(String column, boolean asc) {
-        return toPage(new OrderItem(column, asc));
+        return toPage(new OrderItem().setColumn(column).setAsc(asc));
     }
 }

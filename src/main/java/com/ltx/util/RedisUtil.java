@@ -1,10 +1,10 @@
 package com.ltx.util;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit;
  * @author tianxing
  */
 @Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private ValueOperations<String, String> stringOperation;
     private HashOperations<String, String, String> hashOperation;

@@ -1,6 +1,6 @@
 package com.ltx.exception;
 
-import com.ltx.enums.ErrorCodeEnum;
+import com.ltx.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,8 +19,8 @@ public class CustomException extends RuntimeException {
         this.code = code;
     }
 
-    public CustomException(ErrorCodeEnum errorCodeEnum) {
-        super(errorCodeEnum.getMessage());
-        this.code = errorCodeEnum.getCode();
+    public CustomException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
     }
 }

@@ -2,13 +2,12 @@ package com.ltx.scheduled;
 
 
 import com.ltx.util.RedissonUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * 定时任务
@@ -17,13 +16,13 @@ import javax.annotation.Resource;
  */
 @Component
 @Slf4j(topic = "ScheduledTask")
+@RequiredArgsConstructor
 public class ScheduledTask {
 
     // 秒 分 时 日 月 周
     private final String cron = "* * * * * ?";
 
-    @Resource
-    private RedissonUtil redissonUtil;
+    private final RedissonUtil redissonUtil;
 
     /**
      * 通用的定时任务代码

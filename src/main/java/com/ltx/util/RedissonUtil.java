@@ -1,12 +1,12 @@
 package com.ltx.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Indexed;
 
-import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Indexed
+@RequiredArgsConstructor
 public class RedissonUtil {
 
-    @Resource
-    private RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
 
     /**
      * 获取分布式锁

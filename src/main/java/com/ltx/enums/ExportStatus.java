@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum ExportStatusEnum {
+public enum ExportStatus {
 
     EXPORTING(0, "导出中"), EXPORT_FINISHED(1, "导出结束");
 
@@ -24,9 +24,9 @@ public enum ExportStatusEnum {
      * @return 描述
      */
     public static String getDescByValue(int value) {
-        for (ExportStatusEnum exportStatusEnum : values()) {
-            if (exportStatusEnum.value == value) {
-                return exportStatusEnum.desc;
+        for (ExportStatus exportStatus : values()) {
+            if (exportStatus.value == value) {
+                return exportStatus.desc;
             }
         }
         throw new IllegalArgumentException("Invalid value: " + value);

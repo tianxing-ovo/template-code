@@ -1,6 +1,7 @@
 package com.ltx.interceptor;
 
 import com.ltx.internationalization.MyLocaleResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -8,18 +9,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Resource;
-
 /**
  * Web配置
  *
  * @author tianxing
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Resource
-    private CustomInterceptor customInterceptor;
+    private final CustomInterceptor customInterceptor;
 
     /**
      * 添加拦截器

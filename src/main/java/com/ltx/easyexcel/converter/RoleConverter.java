@@ -7,19 +7,17 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-
-import java.util.Collections;
-import java.util.List;
+import com.ltx.enums.Role;
 
 /**
- * List转换器
+ * 角色枚举转换器
  *
  * @author tianxing
  */
-public class ListConverter implements Converter<List<String>> {
+public class RoleConverter implements Converter<Role> {
     @Override
     public Class<?> supportJavaTypeKey() {
-        return List.class;
+        return Role.class;
     }
 
     @Override
@@ -31,24 +29,21 @@ public class ListConverter implements Converter<List<String>> {
      * 转换为Java数据
      */
     @Override
-    public List<String> convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+    public Role convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        // 获取角色值
         String value = cellData.getStringValue();
         if (StrUtil.isBlank(value)) {
-            return Collections.emptyList();
+            return null;
         }
-        return StrUtil.split(value.trim(), ',');
+        return Role.getEnumByDesc(value.trim());
     }
 
     /**
      * 转换为Excel数据
      */
     @Override
-    public WriteCellData<?> convertToExcelData(List<String> list, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (list == null || list.isEmpty()) {
-            return new WriteCellData<>("--");
-        } else {
-            return new WriteCellData<>(String.join(",", list));
-        }
+    public WriteCellData<?> convertToExcelData(Role role, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        String value = role.getValue();
+        return new WriteCellData<>(Role.getDescByValue(value));
     }
 }
-

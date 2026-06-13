@@ -56,9 +56,10 @@ com.ltx
 │   ├── query/PageQuery    - 分页查询参数
 │   └── request/           - 请求体(UserRequestBody, ExportRequestBody)
 ├── enums             # 枚举
-│   ├── ErrorCodeEnum      - 错误码枚举
-│   ├── ExportStatusEnum   - 导出状态枚举
-│   └── SexEnum            - 性别枚举
+│   ├── ErrorCode          - 错误码枚举
+│   ├── ExportStatus       - 导出状态枚举
+│   ├── Role               - 角色枚举
+│   └── Sex                - 性别枚举
 ├── exception         # 异常处理
 │   ├── CustomException          - 自定义异常
 │   └── GlobalExceptionHandler   - 全局异常处理器
@@ -176,7 +177,7 @@ Spring Session + Redis 实现分布式 Session。
 
 ### 1. 创建数据库
 
-在 MySQL 中创建 `demo` 数据库，包含 `user` 和 `export_task` 表。
+在 MySQL 中创建 `template_code` 数据库，包含 `user` 和 `export_task` 表。
 
 ### 2. 修改配置
 
@@ -184,7 +185,7 @@ Spring Session + Redis 实现分布式 Session。
 
 ```properties
 # MySQL
-spring.datasource.dynamic.datasource.mysql.url=jdbc:mysql://localhost:3306/demo
+spring.datasource.dynamic.datasource.mysql.url=jdbc:mysql://localhost:3306/template_code
 spring.datasource.dynamic.datasource.mysql.username=root
 spring.datasource.dynamic.datasource.mysql.password=123
 
@@ -212,24 +213,24 @@ mvn spring-boot:run
 
 |   方法   |           路径           |        说明         |
 |:------:|:----------------------:|:-----------------:|
-| `GET`  |        `/users`        | 查询用户信息（需要admin角色） |
+| `GET`  |      `/users/me`       | 查询当前用户信息（需要admin角色） |
 | `GET`  |     `/users/{id}`      |      查询指定用户       |
-| `POST` |     `/users/list`      |      查询用户列表       |
+| `GET`  |        `/users`        |   查询用户列表（支持过滤）    |
 | `POST` |        `/users`        |       新增用户        |
-| `POST` |     `/users/{id}`      |       删除用户        |
+| `DELETE`|     `/users/{id}`      |       删除用户        |
 | `PUT`  |     `/users/{id}`      |       更新用户        |
-| `POST` |   `/test-validation`   |     测试实体类校验功能     |
-| `GET`  |   `/test-validation`   |    测试单个参数校验功能     |
-| `GET`  |      `/test-i18n`      |      测试国际化功能      |
-| `POST` |    `/import-by-poi`    |  使用POI库导入xlsx文件   |
-| `POST` | `/import-by-easyexcel` |  使用EasyExcel库导入   |
-| `POST` |       `/export`        |    导出CSV文件到浏览器    |
-| `POST` |   `/export-to-local`   |   异步导出CSV文件到本地    |
-| `GET`  |  `/export-task-list`   |     查询导出任务列表      |
-| `POST` |    `/single-upload`    |      单个文件上传       |
-| `POST` |   `/multiple-upload`   |      多个文件上传       |
-| `GET`  | `/download/{fileName}` |       文件下载        |
-| `GET`  |        `/send`         |   发送RabbitMQ消息    |
+| `POST` |   `/test/validation`   |     测试实体类校验功能     |
+| `GET`  |   `/test/validation`   |    测试单个参数校验功能     |
+| `GET`  |      `/test/i18n`      |      测试国际化功能      |
+| `POST` | `/users/import?engine=poi` |  使用POI库导入xlsx文件   |
+| `POST` | `/users/import?engine=easyexcel` |  使用EasyExcel库导入   |
+| `POST` |    `/users/export`     |    导出CSV文件到浏览器    |
+| `POST` | `/users/export/local`  |   异步导出CSV文件到本地    |
+| `GET`  |    `/export-tasks`     |     查询导出任务列表      |
+| `POST` |    `/files/upload`     |      单个文件上传       |
+| `POST` | `/files/batch-upload`  |      多个文件上传       |
+| `GET`  |   `/files/{fileName}`  |       文件下载        |
+| `POST` |      `/messages`       |   发送RabbitMQ消息    |
 | `POST` |       `/orders`        |     订单规则引擎计算      |
 
 ## 配置说明

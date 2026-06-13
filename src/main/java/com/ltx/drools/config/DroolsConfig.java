@@ -7,7 +7,7 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieRepository;
 import org.kie.api.runtime.KieContainer;
 import org.kie.internal.io.ResourceFactory;
-import org.kie.spring.KModuleBeanFactoryPostProcessor;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +28,6 @@ public class DroolsConfig {
     //指定规则文件存放的目录
     private static final String RULES_PATH = "rules/";
     private final KieServices kieServices = KieServices.Factory.get();
-
-    @Bean
-    @ConditionalOnMissingBean
-    public static KModuleBeanFactoryPostProcessor kiePostProcessor() {
-        return new KModuleBeanFactoryPostProcessor();
-    }
 
     @Bean
     @ConditionalOnMissingBean

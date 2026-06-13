@@ -1,11 +1,11 @@
 package com.ltx.internationalization;
 
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.LocaleResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 /**
@@ -28,7 +28,7 @@ public class MyLocaleResolver implements LocaleResolver {
         // 从请求参数中获取语言设置(格式: lang=zh-CN)
         String lang = request.getParameter("lang");
         // 解析Locale
-        if (StringUtils.isNotBlank(lang)) {
+        if (StrUtil.isNotBlank(lang)) {
             String[] arr = lang.split("-");
             if (arr.length >= 2) {
                 return new Locale(arr[0], arr[1]);

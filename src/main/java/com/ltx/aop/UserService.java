@@ -20,6 +20,8 @@ public class UserService {
         System.out.println("Hello Aop");
         // 获取代理对象
         System.out.println("代理对象: " + AopContext.currentProxy());
-        return new User().setName(name);
+        User user = new User();
+        user.setName(name);
+        return user;
     }
 }

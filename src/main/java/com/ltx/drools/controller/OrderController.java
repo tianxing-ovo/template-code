@@ -2,20 +2,19 @@ package com.ltx.drools.controller;
 
 import com.ltx.drools.entity.Order;
 import com.ltx.drools.service.RuleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 /**
  * @author tianxing
  */
 @RestController
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Resource
-    RuleService ruleService;
+    private final RuleService ruleService;
 
     @PostMapping("/orders")
     public Order saveOrder(@RequestBody Order order) {

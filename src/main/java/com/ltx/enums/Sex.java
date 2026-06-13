@@ -1,6 +1,5 @@
 package com.ltx.enums;
 
-
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum SexEnum {
+public enum Sex {
     MAN(1, "男"), WOMAN(2, "女"), UNKNOWN(3, "未知");
 
     @EnumValue
@@ -28,9 +27,9 @@ public enum SexEnum {
      * @return 描述
      */
     public static String getDescByValue(int value) {
-        for (SexEnum sexEnum : values()) {
-            if (sexEnum.value == value) {
-                return sexEnum.desc;
+        for (Sex sex : values()) {
+            if (sex.value == value) {
+                return sex.desc;
             }
         }
         throw new IllegalArgumentException("Invalid value: " + value);
@@ -42,10 +41,10 @@ public enum SexEnum {
      * @param desc 描述
      * @return 性别枚举
      */
-    public static SexEnum getEnumByDesc(String desc) {
-        for (SexEnum sexEnum : values()) {
-            if (sexEnum.desc.equals(desc)) {
-                return sexEnum;
+    public static Sex getEnumByDesc(String desc) {
+        for (Sex sex : values()) {
+            if (sex.desc.equals(desc)) {
+                return sex;
             }
         }
         throw new IllegalArgumentException("Invalid desc: " + desc);

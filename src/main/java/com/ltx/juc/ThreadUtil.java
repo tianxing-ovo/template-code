@@ -1,9 +1,9 @@
 package com.ltx.juc;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -11,10 +11,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author tianxing
  */
 @Component
+@RequiredArgsConstructor
 public class ThreadUtil {
 
-    @Resource
-    private ThreadPoolExecutor threadPoolExecutor;
+    private final ThreadPoolExecutor threadPoolExecutor;
 
     /**
      * 无返回值

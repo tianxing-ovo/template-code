@@ -1,10 +1,10 @@
 package com.ltx.internationalization;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Locale;
 
 /**
@@ -13,10 +13,10 @@ import java.util.Locale;
  * @author tianxing
  */
 @Component
+@RequiredArgsConstructor
 public class MessageSourceUtil {
 
-    @Resource
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     /**
      * 使用当前线程的Locale -> 根据key获取value
