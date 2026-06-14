@@ -20,18 +20,4 @@ public enum ErrorCode {
     private final int code;
     private final String message;
 
-    /**
-     * 根据错误状态码获取提示信息
-     *
-     * @param code 错误状态码
-     * @return 提示信息
-     */
-    public static String getMessageByCode(int code) {
-        for (ErrorCode errorCode : values()) {
-            if (errorCode.code == code) {
-                return errorCode.message;
-            }
-        }
-        return "";
-    }
 }

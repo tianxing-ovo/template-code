@@ -1,23 +1,20 @@
 package com.ltx.controller;
 
-import com.alibaba.excel.support.ExcelTypeEnum;
 import com.ltx.annotation.PreAuthorize;
 import com.ltx.service.UserExportService;
 import com.ltx.service.UserImportService;
 import com.ltx.entity.Result;
+import com.ltx.entity.po.ExportTask;
 import com.ltx.entity.po.User;
 import com.ltx.entity.request.ExportRequestBody;
 import com.ltx.entity.request.UserRequestBody;
 import com.ltx.enums.Role;
 import com.ltx.exception.CustomException;
-import com.ltx.mapper.UserMapper;
+import com.ltx.service.UserService;
 import com.ltx.util.UserContext;
 import com.ltx.valid.InsertGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserMapper userMapper;
+    private final UserService userService;
     private final UserExportService userExportService;
     private final UserImportService userImportService;
 
@@ -58,9 +56,9 @@ public class UserController {
      * 查询指定用户
      */
     @GetMapping("/users/{id}")
-    @Cacheable(value = "userCache", key = "T(com.ltx.constant.RedisConstant).CACHE_USER_KEY+#id", unless = "#result == null")
-    public User query(@PathVariable Integer id) {
-        return userMapper.selectById(id);
+    public Result query(@PathVariable Integer id) {
+        User user = userService.getUserById(id);
+        return Result.success().put("user", user);
     }
 
     /**
@@ -70,47 +68,45 @@ public class UserController {
      * @return 用户列表
      */
     @GetMapping("/users")
-    @Cacheable(value = "userCache", key = "T(com.ltx.constant.RedisConstant).CACHE_USER_KEY + (#requestBody.id == null && #requestBody.age == null && #requestBody.name == null ? 'allUsers' : #requestBody.id + ':' + #requestBody.age + ':' + #requestBody.name)", unless = "#result == null || #result.size() == 0")
-    public List<User> queryUserList(UserRequestBody requestBody) {
-        return userMapper.queryUserList(requestBody);
+    public Result queryUserList(UserRequestBody requestBody) {
+        List<User> userList = userService.queryUserList(requestBody);
+        return Result.success().put("userList", userList);
     }
 
     /**
-     * 新增
+     * 新增用户
      *
      * @param user 用户
      * @return 用户
      */
     @PostMapping("/users")
-    @CachePut(value = "userCache", key = "#user.id")
-    public User add(@RequestBody User user) {
-        userMapper.add(user);
-        return user;
+    public Result add(@RequestBody User user) {
+        User addUser = userService.addUser(user);
+        return Result.success().put("user", addUser);
     }
 
     /**
-     * 删除
+     * 删除用户
      *
-     * @param id 用户id
+     * @param id 用户ID
      */
     @DeleteMapping("/users/{id}")
-    @CacheEvict(value = "userCache", key = "#id")
-    public void delete(@PathVariable Integer id) {
-        userMapper.deleteById(id);
+    public Result delete(@PathVariable Integer id) {
+        userService.deleteUserById(id);
+        return Result.success();
     }
 
     /**
-     * 更新
+     * 更新用户
      *
-     * @param id 用户id
+     * @param id 用户ID
+     * @param user 用户
+     * @return 通用响应对象
      */
     @PutMapping("/users/{id}")
-    @CacheEvict(value = "userCache", key = "#id")
-    public void update(@PathVariable Integer id) {
-        User user = new User();
-        user.setId(id);
-        user.setAge(20);
-        userMapper.updateById(user);
+    public Result update(@PathVariable Integer id, @RequestBody User user) {
+        userService.updateUser(id, user);
+        return Result.success();
     }
 
     /**
@@ -156,7 +152,7 @@ public class UserController {
     }
 
     /**
-     * 使用easyExcel库导出CSV文件到浏览器
+     * 使用easyExcel库导出文件到浏览器
      *
      * @param response    响应
      * @param requestBody 请求体
@@ -164,18 +160,23 @@ public class UserController {
     @PostMapping("/users/export")
     public void export(HttpServletResponse response, @RequestBody ExportRequestBody requestBody) {
         List<User> list = userExportService.getExportUsers();
-        userExportService.export(response, list, requestBody, User.class, ExcelTypeEnum.CSV);
+        userExportService.export(response, list, requestBody, User.class);
     }
 
     /**
-     * 使用easyExcel库异步导出CSV文件到本地
+     * 使用easyExcel库异步导出文件到本地
      *
      * @param requestBody 请求体
+     * @return 通用响应对象
      */
     @PostMapping("/users/export/local")
-    public void asyncExport(@RequestBody ExportRequestBody requestBody) {
+    public Result asyncExport(@RequestBody ExportRequestBody requestBody) {
         // 在主线程中提前获取userId(避免异步线程中ThreadLocal为空)
         Integer userId = UserContext.get().getId();
-        userExportService.asyncExport(requestBody, userId);
+        // 创建⌈排队中⌋的导出任务并返回任务实体对象
+        ExportTask exportTask = userExportService.createPendingTask(requestBody, userId);
+        // 异步执行导出任务
+        userExportService.asyncExport(requestBody, exportTask.getId(), exportTask.getFileName());
+        return Result.success();
     }
 }

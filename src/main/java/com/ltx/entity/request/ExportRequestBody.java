@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 导出csv文件请求体
+ * 导出文件请求体
  *
  * @author tianxing
  */

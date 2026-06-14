@@ -12,23 +12,22 @@ import lombok.Getter;
 @Getter
 public enum ExportStatus {
 
-    EXPORTING(0, "导出中"), EXPORT_FINISHED(1, "导出结束");
+    PENDING(0, "排队中"),
+    EXPORTING(1, "导出中"),
+    SUCCESS(2, "成功"),
+    FAIL(3, "失败");
 
     private final int value;
     private final String desc;
 
     /**
-     * 根据值获取描述
+     * 判断状态是否为已完成
      *
-     * @param value 值
-     * @return 描述
+     * @param value 状态值
+     * @return 是否已完成
      */
-    public static String getDescByValue(int value) {
-        for (ExportStatus exportStatus : values()) {
-            if (exportStatus.value == value) {
-                return exportStatus.desc;
-            }
-        }
-        throw new IllegalArgumentException("Invalid value: " + value);
+    public static boolean isFinished(Integer value) {
+        return value != null && (value == SUCCESS.value || value == FAIL.value);
     }
+
 }

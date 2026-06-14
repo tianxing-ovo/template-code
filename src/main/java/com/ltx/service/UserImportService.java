@@ -35,12 +35,15 @@ public class UserImportService {
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
+            // 读取Excel文件
             EasyExcel.read(inputStream, User.class, userListener).sheet().doRead();
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new CustomException(500, e.getMessage());
         }
+        // 从监听器中获取用户列表
         List<User> userList = userListener.getUserList();
+        // 批量导入用户数据至数据库
         if (!userList.isEmpty()) {
             log.info("开始批量导入 {} 条用户数据至数据库", userList.size());
             Db.saveBatch(userList);

@@ -1,5 +1,8 @@
 package com.ltx.cache;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
@@ -26,16 +29,25 @@ public class CacheConfig {
      * 自定义Redis缓存配置
      *
      * @param cacheProperties 缓存配置属性
+     * @param springObjectMapper Spring托管的ObjectMapper
      * @return Redis缓存配置
      */
     @Bean
-    public RedisCacheConfiguration redisCacheConfiguration(CacheProperties cacheProperties) {
+    public RedisCacheConfiguration redisCacheConfiguration(CacheProperties cacheProperties, ObjectMapper springObjectMapper) {
         // 获取默认配置
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
         // 指定key的序列化方式为String
         config = config.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
+        // 复制一份Spring托管的ObjectMapper
+        ObjectMapper redisObjectMapper = springObjectMapper.copy();
+        redisObjectMapper.activateDefaultTyping(
+            LaissezFaireSubTypeValidator.instance,
+            ObjectMapper.DefaultTyping.NON_FINAL,
+            JsonTypeInfo.As.PROPERTY
+        );
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
         // 指定value的序列化方式为json
-        config = config.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        config = config.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
         CacheProperties.Redis redisProperties = cacheProperties.getRedis();
         if (redisProperties.getTimeToLive() != null) {
             // 缓存过期时间

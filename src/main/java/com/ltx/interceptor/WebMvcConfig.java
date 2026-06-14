@@ -53,7 +53,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     /**
      * 注册自定义的LocaleResolver
      *
-     * @return
+     * @return 自定义的LocaleResolver
      */
     @Bean
     public LocaleResolver localeResolver() {

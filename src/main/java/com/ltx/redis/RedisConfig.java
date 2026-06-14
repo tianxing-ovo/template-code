@@ -1,5 +1,8 @@
 package com.ltx.redis;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,15 +22,22 @@ public class RedisConfig {
      * 配置RedisTemplate
      *
      * @param connectionFactory 连接工厂
+     * @param springObjectMapper Spring托管的ObjectMapper
      * @return RedisTemplate
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper springObjectMapper) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         // 设置连接工厂
         template.setConnectionFactory(connectionFactory);
-        // 创建json序列化工具
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+        // 复制一份Spring托管的ObjectMapper
+        ObjectMapper redisObjectMapper = springObjectMapper.copy();
+        redisObjectMapper.activateDefaultTyping(
+            LaissezFaireSubTypeValidator.instance,
+            ObjectMapper.DefaultTyping.NON_FINAL,
+            JsonTypeInfo.As.PROPERTY
+        );
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
         // 设置key的序列化
         template.setKeySerializer(RedisSerializer.string());
         template.setHashKeySerializer(RedisSerializer.string());

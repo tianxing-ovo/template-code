@@ -1,9 +1,1490 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Code 控制台</title>
+    <!-- 引入高档英文字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --bg-card: rgba(30, 41, 59, 0.45);
+            --bg-control: rgba(15, 23, 42, 0.6);
+            --bg-table-header: rgba(30, 41, 59, 0.4);
+            --bg-modal: #111827;
+            --bg-toast: rgba(30, 41, 59, 0.9);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --primary-hover: #4f46e5;
+            
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --error: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.2);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.2);
+            --info: #0ea5e9;
+            --info-glow: rgba(14, 165, 233, 0.2);
+            
+            --radial-glow: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                           radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+            --header-bg: rgba(9, 13, 22, 0.5);
+            --title-gradient: linear-gradient(to right, #ffffff, #a5b4fc);
+        }
+
+        :root[data-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-surface: rgba(255, 255, 255, 0.75);
+            --bg-card: rgba(255, 255, 255, 0.75);
+            --bg-control: #ffffff;
+            --bg-table-header: rgba(241, 245, 249, 0.85);
+            --bg-modal: #ffffff;
+            --bg-toast: rgba(255, 255, 255, 0.95);
+            --border-glow: rgba(99, 102, 241, 0.08);
+            --border-subtle: rgba(15, 23, 42, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+            --primary-hover: #3730a3;
+            
+            --radial-glow: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 40%),
+                           radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+            --header-bg: rgba(255, 255, 255, 0.65);
+            --title-gradient: linear-gradient(to right, #0f172a, #334155);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: var(--radial-glow);
+            background-attachment: fixed;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 顶部导航 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            backdrop-filter: blur(12px);
+            background-color: var(--header-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-badge {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--primary-glow);
+            letter-spacing: 1px;
+        }
+
+        .logo-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: var(--title-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 信息提示组件 */
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: var(--bg-toast);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            backdrop-filter: blur(8px);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, color 0.3s ease;
+        }
+
+        :root[data-theme="light"] .toast {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .toast-success .toast-icon { background: var(--success); color: white; }
+        .toast-error .toast-icon { background: var(--error); color: white; }
+        .toast-info .toast-icon { background: var(--info); color: white; }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 0.2rem;
+            line-height: 1;
+        }
+
+        /* 主容器 */
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            main {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+
+        /* 通用卡片样式 */
+        .glass-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.75rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root[data-theme="light"] .glass-card {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        :root[data-theme="light"] .glass-card:hover {
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.08);
+        }
+
+        .glass-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--border-glow), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .glass-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.04);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        /* 统一输入框与表单 */
+        .form-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-row-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .form-row-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 0;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--bg-control);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+        }
+
+        /* 按钮设计 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="light"] .btn-secondary {
+            background: #ffffff;
+            border-color: var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        :root[data-theme="light"] .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.04);
+        }
+
+        .btn-danger {
+            background: rgba(239, 108, 108, 0.1);
+            border-color: rgba(239, 68, 68, 0.25);
+            color: var(--error);
+        }
+
+        .btn-danger:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background-color: rgba(15, 23, 42, 0.2);
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        :root[data-theme="light"] .table-container {
+            background-color: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: var(--bg-table-header);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            transition: background-color 0.3s ease;
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="light"] td {
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        :root[data-theme="light"] tr:hover td {
+            background-color: rgba(15, 23, 42, 0.015);
+        }
+
+        /* 导出任务表格居中对齐且不换行 */
+        #task-table th, #task-table td {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* 状态标记 */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-0 { background: rgba(100, 116, 139, 0.15); color: var(--text-secondary); } /* 排队中 */
+        .status-1 { background: rgba(14, 165, 233, 0.15); color: var(--info); }        /* 运行中 */
+        .status-2 { background: rgba(16, 185, 129, 0.15); color: var(--success); }     /* 成功 */
+        .status-3 { background: rgba(239, 68, 68, 0.15); color: var(--error); }        /* 失败 */
+
+        /* 上传区域 */
+        .upload-zone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: rgba(15, 23, 42, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        :root[data-theme="light"] .upload-zone {
+            background: rgba(15, 23, 42, 0.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--text-muted);
+            transition: color 0.25s ease;
+        }
+
+        .upload-zone:hover .upload-icon {
+            color: var(--primary);
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-text span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 弹窗/模态框 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(9, 13, 22, 0.6);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-modal);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 680px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        :root[data-theme="light"] .modal-content {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        :root[data-theme="light"] .modal-header {
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* 载入特效 */
+        .spinner {
+            border: 2px solid rgba(148, 163, 184, 0.25);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 选中列设置 */
+        .field-checkbox-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border-subtle);
+            padding: 0.75rem;
+            border-radius: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+            transition: background-color 0.3s ease;
+        }
+
+        :root[data-theme="light"] .field-checkbox-container {
+            background: rgba(15, 23, 42, 0.03);
+        }
+
+        .field-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- 提示框容器 -->
+    <div id="toast-container"></div>
+
+    <!-- 顶部导航 -->
+    <header>
+        <div class="logo-section">
+            <div class="logo-badge">LTX</div>
+            <div class="logo-title">Template Code 控制台</div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 1rem;">
+            <!-- 主题切换按钮 -->
+            <button id="theme-toggle" class="btn btn-secondary btn-sm" onclick="toggleTheme()" style="padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
+                <!-- 太阳图标 -->
+                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+                <!-- 月亮图标 -->
+                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px; display:none;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                </svg>
+            </button>
+            <span class="status-badge status-2">在线</span>
+            <span>当前登录：ID 1 (模拟)</span>
+        </div>
+    </header>
+
+    <!-- 主布局 -->
+    <main>
+        
+        <!-- 左侧栏：用户管理与上传 -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- 用户管理卡片 -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 20c-2.202 0-4.277-.625-6.042-1.71a3.12 3.12 0 014.538-4.908c.556.449 1.161.8 1.815 1.054m4.796-1.48c.024-.31.034-.62.034-.931s-.01-.621-.034-.931m-4.796 1.48a11.112 11.112 0 003.478-.397m-12 5.62c.34-.059.68-.114 1.022-.165m0 0a10.82 10.82 0 019.98-9.98m-9.98 9.98A11.411 11.411 0 0110.09 18a11.41 11.41 0 01-6.042-1.71" />
+                        </svg>
+                        用户数据管理
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                        + 新增用户
+                    </button>
+                </div>
+
+                <!-- 搜索表单 -->
+                <div class="form-row form-row-3">
+                    <div class="form-group">
+                        <label class="form-label">用户 ID</label>
+                        <input type="number" id="search-id" class="form-control" placeholder="按ID精准查询">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">姓名</label>
+                        <input type="text" id="search-name" class="form-control" placeholder="按姓名模糊查询">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">年龄</label>
+                        <input type="number" id="search-age" class="form-control" placeholder="输入最大年龄限制">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <button class="btn btn-secondary btn-sm" onclick="resetSearch()">重置</button>
+                    <button class="btn btn-primary btn-sm" onclick="loadUsers()">搜索</button>
+                </div>
+
+                <!-- 用户列表表格 -->
+                <div class="table-container">
+                    <table id="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>年龄</th>
+                                <th>性别</th>
+                                <th>城市</th>
+                                <th>描述</th>
+                                <th>角色</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- 动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 文件上传卡片 -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+                        文件传输中心
+                    </div>
+                </div>
+
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">单个文件上传</label>
+                        <div class="upload-zone" onclick="document.getElementById('single-file').click()">
+                            <svg class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                            <div class="upload-text">点击或拖拽文件 <span>上传</span></div>
+                            <input type="file" id="single-file" style="display:none" onchange="uploadSingleFile(this.files[0])">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">批量文件上传</label>
+                        <div class="upload-zone" onclick="document.getElementById('batch-files').click()">
+                            <svg class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                            <div class="upload-text">点击或拖拽多个文件 <span>批量上传</span></div>
+                            <input type="file" id="batch-files" multiple style="display:none" onchange="uploadBatchFiles(this.files)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 右侧栏：数据交换与异步任务 -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Excel / Data Exchange Card -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25h-.75m-6 3.75l3 3m0 0l3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
+                        </svg>
+                        数据导入与导出
+                    </div>
+                </div>
+
+                <!-- Excel 导入 -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label">Excel 导入用户（支持自动存入数据库）</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="file" id="excel-import-file" class="form-control" accept=".xlsx,.xls,.csv" style="flex-grow: 1;">
+                        <button class="btn btn-primary" onclick="importExcel()">导入</button>
+                    </div>
+                </div>
+
+                <!-- Excel 导出配置 -->
+                <div style="border-top: 1px solid var(--border-subtle); padding-top: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label">导出文件名</label>
+                        <input type="text" id="export-filename" class="form-control" value="users.xlsx">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label">选择导出字段</label>
+                        <div class="field-checkbox-container">
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="id" checked> ID</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="name" checked> 姓名</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="age" checked> 年龄</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="sex" checked> 性别</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="password" checked> 密码</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="province" checked> 省份</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="city" checked> 城市</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="address" checked> 详细地址</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="description" checked> 描述</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="createTime" checked> 创建时间</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="updateTime" checked> 更新时间</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="role" checked> 角色</label>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="exportToBrowser()">浏览器同步下载</button>
+                        <button class="btn btn-primary" onclick="exportToLocal()">触发后台异步导出</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Async Task Monitor -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375c.9 0 1.625-.724 1.625-1.625 0-.9-.725-1.625-1.625-1.625H9.75M12 21a9.003 9.003 0 008.354-5.646 9.003 9.003 0 00-8.354-5.646M12 21a9.003 9.003 0 01-8.354-5.646 9.003 9.003 0 018.354-5.646M12 21V3m0 18a9 9 0 009-9M12 3a9 9 0 00-9 9m9-9V3m0 0a9 9 0 019 9" />
+                        </svg>
+                        后台导出任务监控器
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 0.25rem;">
+                        <input type="checkbox" id="auto-refresh" checked style="cursor:pointer">
+                        <label for="auto-refresh" style="font-size:0.75rem; color:var(--text-secondary); cursor:pointer">自动刷新</label>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="task-table">
+                        <thead>
+                            <tr>
+                                <th>任务 ID</th>
+                                <th>状态</th>
+                                <th>文件大小</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-table-body">
+                            <!-- 动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: 新增用户 -->
+    <div class="modal" id="add-user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">添加新用户</div>
+                <button class="modal-close" onclick="closeAddModal()">&times;</button>
+            </div>
+            <form id="add-user-form" onsubmit="submitAddUser(event)">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">姓名 *</label>
+                        <input type="text" id="add-name" class="form-control" required placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" id="password-label">密码 *</label>
+                        <input type="password" id="add-password" class="form-control" required placeholder="请输入密码">
+                    </div>
+                </div>
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">年龄</label>
+                        <input type="number" id="add-age" class="form-control" max="150" placeholder="请输入年龄">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">性别</label>
+                        <select id="add-sex" class="form-control">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">系统角色</label>
+                        <select id="add-role" class="form-control">
+                            <option value="普通用户">普通用户</option>
+                            <option value="管理员">管理员</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <!-- 占位保持对齐 -->
+                    </div>
+                </div>
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">省份 *</label>
+                        <select id="add-province" class="form-control" required onchange="onProvinceChange()">
+                            <option value="">请选择省份</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">城市</label>
+                        <select id="add-city" class="form-control">
+                            <option value="">请选择城市</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">详细地址 *</label>
+                    <input type="text" id="add-address" class="form-control" required placeholder="如：南山区科兴科学园">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label">个人描述</label>
+                    <textarea id="add-description" class="form-control" rows="2" placeholder="介绍一下你自己..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">提交保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        // 主题切换逻辑
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            let targetTheme = 'dark';
+            if (currentTheme !== 'light') {
+                targetTheme = 'light';
+            }
+            
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+            
+            updateThemeIcons(targetTheme);
+        }
+
+        function updateThemeIcons(theme) {
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (theme === 'light') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        // 初始化主题设置
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // 消息通知通知组件
+        function showToast(title, desc, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconText = 'i';
+            if (type === 'success') iconText = '✓';
+            if (type === 'error') iconText = '✗';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${iconText}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-desc">${desc}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(toast);
+            
+            // 触发进入动画
+            setTimeout(() => toast.classList.add('show'), 50);
+            
+            // 5秒后自动销毁
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 5000);
+        }
+
+        // 格式化文件大小
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // ================= USER CRUD OPERATIONS =================
+        
+        // 加载用户列表
+        async function loadUsers() {
+            const searchId = document.getElementById('search-id').value;
+            const searchName = document.getElementById('search-name').value;
+            const searchAge = document.getElementById('search-age').value;
+            
+            let queryParams = [];
+            if (searchId) queryParams.push(`id=${searchId}`);
+            if (searchName) queryParams.push(`name=${searchName}`);
+            if (searchAge) queryParams.push(`age=${searchAge}`);
+            
+            const url = '/users' + (queryParams.length ? '?' + queryParams.join('&') : '');
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('网络响应错误');
+                const result = await response.json();
+                
+                if (result.code !== 200) {
+                    throw new Error(result.msg || '加载用户列表失败');
+                }
+                
+                const users = result.data.userList || [];
+                
+                const tbody = document.getElementById('user-table-body');
+                tbody.innerHTML = '';
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">暂无用户数据</td></tr>`;
+                    return;
+                }
+                
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-weight:600; color:var(--primary)">${user.id}</td>
+                        <td>${user.name || '-'}</td>
+                        <td>${user.age || '-'}</td>
+                        <td>${user.sex || '-'}</td>
+                        <td>${user.city || '-'}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${user.description || ''}">${user.description || '-'}</td>
+                        <td><span class="status-badge ${user.role === '管理员' ? 'status-1' : 'status-0'}">${user.role || '-'}</span></td>
+                        <td>
+                            <div class="btn-group" style="display: inline-flex; gap: 0.5rem;">
+                                <button class="btn btn-primary btn-sm" onclick="openEditModal(${user.id})">编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">删除</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                showToast('加载用户失败', err.message, 'error');
+            }
+        }
+
+        // 删除用户
+        async function deleteUser(id) {
+            if (!confirm(`确定删除ID为 ${id} 的用户吗？`)) return;
+            try {
+                const response = await fetch(`/users/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showToast('删除成功', `已删除ID为 ${id} 的用户`, 'success');
+                    loadUsers();
+                } else {
+                    throw new Error('删除失败');
+                }
+            } catch (err) {
+                showToast('操作失败', err.message, 'error');
+            }
+        }
+
+        // 省份与城市级联数据（全国所有 34 个省/直辖市/自治区/特别行政区及地级市）
+        const locationData = {
+            "北京市": ["北京市"],
+            "上海市": ["上海市"],
+            "天津市": ["天津市"],
+            "重庆市": ["重庆市"],
+            "河北省": ["石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市", "张家口市", "承德市", "沧州市", "廊坊市", "衡水市"],
+            "山西省": ["太原市", "大同市", "阳泉市", "长治市", "晋城市", "朔州市", "晋中市", "运城市", "忻州市", "临汾市", "吕梁市"],
+            "内蒙古自治区": ["呼和浩特市", "包头市", "乌海市", "赤峰市", "通辽市", "鄂尔多斯市", "呼伦贝尔市", "巴彦淖尔市", "乌兰察布市", "兴安盟", "锡林郭勒盟", "阿拉善盟"],
+            "辽宁省": ["沈阳市", "大连市", "鞍山市", "抚顺市", "本溪市", "丹东市", "锦州市", "营口市", "阜新市", "辽阳市", "盘锦市", "铁岭市", "朝阳市", "葫芦岛市"],
+            "吉林省": ["长春市", "吉林市", "四平市", "辽源市", "通化市", "白山市", "松原市", "白城市", "延边朝鲜族自治州"],
+            "黑龙江省": ["哈尔滨市", "齐齐哈尔市", "鸡西市", "鹤岗市", "双鸭山市", "大庆市", "伊春市", "佳木斯市", "七台河市", "牡丹江市", "黑河市", "绥化市", "大兴安岭地区"],
+            "江苏省": ["南京市", "无锡市", "徐州市", "常州市", "苏州市", "南通市", "连云港市", "淮安市", "盐城市", "扬州市", "镇江市", "泰州市", "宿迁市"],
+            "浙江省": ["杭州市", "宁波市", "温州市", "嘉兴市", "湖州市", "绍兴市", "金华市", "衢州市", "舟山市", "台州市", "丽水市"],
+            "安徽省": ["合肥市", "芜湖市", "蚌埠市", "淮南市", "马鞍山市", "淮北市", "铜陵市", "安庆市", "黄山市", "滁州市", "阜阳市", "宿州市", "六安市", "亳州市", "池州市", "宣城市"],
+            "福建省": ["福州市", "厦门市", "莆田市", "三明市", "泉州市", "漳州市", "南平市", "龙岩市", "宁德市"],
+            "江西省": ["南昌市", "景镇市", "萍乡市", "九江市", "新余市", "鹰潭市", "赣州市", "吉安市", "宜春市", "抚州市", "上饶市"],
+            "山东省": ["济南市", "青岛市", "淄博市", "枣庄市", "东营市", "烟台市", "潍坊市", "济宁市", "泰安市", "威海市", "日照市", "临沂市", "德州市", "聊城市", "滨州市", "菏泽市"],
+            "河南省": ["郑州市", "开封市", "洛阳市", "平顶山市", "安阳市", "鹤壁市", "新乡市", "焦作市", "濮阳市", "许昌市", "漯河市", "三门峡市", "南阳市", "商丘市", "信阳市", "周口市", "驻马店市", "济源市"],
+            "湖北省": ["武汉市", "黄石市", "十堰市", "宜昌市", "襄阳市", "鄂州市", "荆门市", "孝感市", "荆州市", "黄冈市", "咸宁市", "随州市", "恩施土家族苗族自治州", "仙桃市", "潜江市", "天门市", "神农架林区"],
+            "湖南省": ["长沙市", "株洲市", "湘潭市", "衡阳市", "邵阳市", "岳阳市", "常德市", "张家界市", "益阳市", "郴州市", "永州市", "怀化市", "娄底市", "湘西土家族苗族自治州"],
+            "广东省": ["广州市", "韶关市", "深圳市", "珠海市", "汕头市", "佛山市", "江门市", "湛江市", "茂名市", "肇庆市", "惠州市", "梅州市", "汕尾市", "河源市", "阳江市", "清远市", "东莞市", "中山市", "潮州市", "揭阳市", "云浮市"],
+            "广西壮族自治区": ["南宁市", "柳州市", "桂林市", "梧州市", "北海市", "防城港市", "钦州市", "贵港市", "玉林市", "百色市", "贺州市", "河池市", "来宾市", "崇左市"],
+            "海南省": ["海口市", "三亚市", "三沙市", "儋州市", "五指山市", "琼海市", "文昌市", "万宁市", "东方市", "定安县", "屯昌县", "澄迈县", "临高县", "白沙黎族自治县", "昌江黎族自治县", "乐东黎族自治县", "陵水黎族自治县", "保亭黎族苗族自治县", "琼中黎族苗族自治县"],
+            "四川省": ["成都市", "自贡市", "攀枝花市", "泸州市", "德阳市", "绵阳市", "广元市", "遂宁市", "内江市", "乐山市", "南充市", "眉山市", "宜宾市", "广安市", "达州市", "雅安市", "巴中市", "资阳市", "阿坝藏族羌族自治州", "甘孜藏族自治州", "凉山彝族自治州"],
+            "贵州省": ["贵阳市", "六盘水市", "遵义市", "安顺市", "铜仁市", "黔西南布依族苗族自治州", "毕节市", "黔东南苗族侗族自治州", "黔南布依族苗族自治州"],
+            "云南省": ["昆明市", "曲靖市", "玉溪市", "保山市", "昭通市", "丽江市", "普洱市", "临沧市", "楚雄彝族自治州", "红河哈尼族彝族自治州", "文山壮族苗族自治州", "西双版纳傣族自治州", "大理白族自治州", "德宏傣族景颇族自治州", "怒江傈僳族自治州", "迪庆藏族自治州"],
+            "西藏自治区": ["拉萨市", "日喀则市", "昌都市", "林芝市", "山南市", "那曲市", "阿里地区"],
+            "陕西省": ["西安市", "铜川市", "宝鸡市", "咸阳市", "渭南市", "延安市", "汉中市", "榆林市", "安康市", "商洛市"],
+            "甘肃省": ["兰州市", "嘉峪关市", "金昌市", "白银市", "天水市", "武威市", "张掖市", "平凉市", "酒泉市", "庆阳市", "定西市", "陇南市", "临夏回族自治州", "甘南藏族自治州"],
+            "青海省": ["西宁市", "海东市", "海北藏族自治州", "黄南藏族自治州", "海南藏族自治州", "果洛藏族自治州", "玉树藏族自治州", "海西蒙古族藏族自治州"],
+            "宁夏回族自治区": ["银川市", "石嘴山市", "吴忠市", "固原市", "中卫市"],
+            "新疆维吾尔自治区": ["乌鲁木齐市", "克拉玛依市", "吐鲁番市", "哈密市", "昌吉回族自治州", "博尔塔拉蒙古自治州", "巴音郭楞蒙古自治州", "阿克苏地区", "克孜勒苏柯尔克孜自治州", "喀什地区", "和田地区", "伊犁哈萨克自治州", "塔城地区", "阿勒泰地区", "石河子市", "阿拉尔市", "图木舒克市", "五家渠市", "铁门关市"],
+            "香港特别行政区": ["香港岛", "九龙", "新界"],
+            "澳门特别行政区": ["澳门半岛", "氹仔岛", "路环岛"],
+            "台湾省": ["台北市", "新北市", "桃园市", "台中市", "台南市", "高雄市", "基隆市", "新竹市", "嘉义市", "新竹县", "苗栗县", "彰化县", "南投县", "云林县", "嘉义县", "屏东县", "宜兰县", "花莲县", "台东县", "澎湖县", "金门县", "连江县"]
+        };
+
+        // 初始化省份下拉列表
+        function initProvinceSelect() {
+            const provinceSelect = document.getElementById('add-province');
+            provinceSelect.innerHTML = '<option value="">请选择省份</option>';
+            Object.keys(locationData).forEach(prov => {
+                const opt = document.createElement('option');
+                opt.value = prov;
+                opt.textContent = prov;
+                provinceSelect.appendChild(opt);
+            });
+            document.getElementById('add-city').innerHTML = '<option value="">请选择城市</option>';
+        }
+
+        // 省份切换联动城市
+        function onProvinceChange() {
+            const provinceVal = document.getElementById('add-province').value;
+            const citySelect = document.getElementById('add-city');
+            citySelect.innerHTML = '<option value="">请选择城市</option>';
+            
+            if (provinceVal && locationData[provinceVal]) {
+                locationData[provinceVal].forEach(city => {
+                    const opt = document.createElement('option');
+                    opt.value = city;
+                    opt.textContent = city;
+                    citySelect.appendChild(opt);
+                });
+            }
+        }
+
+        // 打开/关闭模态框
+        function openAddModal() {
+            document.getElementById('modal-title').innerText = '添加新用户';
+            document.getElementById('password-label').innerHTML = '密码 *';
+            document.getElementById('add-password').required = true;
+            document.getElementById('edit-user-id').value = '';
+
+            initProvinceSelect();
+            document.getElementById('add-user-modal').classList.add('show');
+        }
+        function closeAddModal() {
+            document.getElementById('add-user-modal').classList.remove('show');
+            document.getElementById('add-user-form').reset();
+            document.getElementById('edit-user-id').value = '';
+            document.getElementById('add-city').innerHTML = '<option value="">请选择城市</option>';
+        }
+
+        // 打开编辑模态框
+        async function openEditModal(id) {
+            document.getElementById('modal-title').innerText = '编辑用户';
+            document.getElementById('password-label').innerHTML = '密码 (留空不修改)';
+            document.getElementById('add-password').required = false;
+            document.getElementById('edit-user-id').value = id;
+
+            initProvinceSelect();
+            
+            try {
+                const response = await fetch(`/users/${id}`);
+                const result = await response.json();
+                if (result.code !== 200) {
+                    throw new Error(result.msg || '获取用户详情失败');
+                }
+                const user = result.data.user;
+                
+                document.getElementById('add-name').value = user.name || '';
+                document.getElementById('add-age').value = user.age || '';
+                document.getElementById('add-sex').value = user.sex || '男';
+                document.getElementById('add-role').value = user.role || '普通用户';
+                
+                if (user.province) {
+                    document.getElementById('add-province').value = user.province;
+                    onProvinceChange();
+                    if (user.city) {
+                        document.getElementById('add-city').value = user.city;
+                    }
+                }
+                
+                document.getElementById('add-address').value = user.address || '';
+                document.getElementById('add-description').value = user.description || '';
+                
+                document.getElementById('add-user-modal').classList.add('show');
+            } catch (err) {
+                showToast('获取详情失败', err.message, 'error');
+            }
+        }
+
+        // 提交添加或修改用户
+        async function submitAddUser(event) {
+            event.preventDefault();
+            const editId = document.getElementById('edit-user-id').value;
+            const passwordVal = document.getElementById('add-password').value;
+            const payload = {
+                name: document.getElementById('add-name').value,
+                age: parseInt(document.getElementById('add-age').value) || null,
+                sex: document.getElementById('add-sex').value,
+                province: document.getElementById('add-province').value,
+                city: document.getElementById('add-city').value || null,
+                address: document.getElementById('add-address').value,
+                description: document.getElementById('add-description').value || null,
+                role: document.getElementById('add-role').value
+            };
+
+            if (passwordVal) {
+                payload.password = [passwordVal];
+            } else if (!editId) {
+                payload.password = [];
+            }
+
+            try {
+                const url = editId ? `/users/${editId}` : '/users';
+                const method = editId ? 'PUT' : 'POST';
+                const successTitle = editId ? '用户修改成功' : '用户创建成功';
+                const successDesc = editId ? '已保存用户修改信息' : '已向数据库插入新用户记录';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showToast(successTitle, successDesc, 'success');
+                    closeAddModal();
+                    loadUsers();
+                } else {
+                    const errMsg = await response.text();
+                    throw new Error(errMsg || '提交失败');
+                }
+            } catch (err) {
+                showToast('提交失败', err.message, 'error');
+            }
+        }
+
+        function resetSearch() {
+            document.getElementById('search-id').value = '';
+            document.getElementById('search-name').value = '';
+            document.getElementById('search-age').value = '';
+            loadUsers();
+        }
+
+        // ================= FILE UPLOAD AND DOWNLOAD =================
+
+        // 单文件上传
+        async function uploadSingleFile(file) {
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            showToast('开始上传', `正在上传单文件: ${file.name}...`, 'info');
+            try {
+                const response = await fetch('/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.code === 200) {
+                    showToast('上传成功', `文件 ${file.name} 已保存到服务器桌面！`, 'success');
+                } else {
+                    throw new Error(result.msg);
+                }
+            } catch (err) {
+                showToast('文件上传失败', err.message, 'error');
+            }
+        }
+
+        // 批量文件上传
+        async function uploadBatchFiles(files) {
+            if (!files || files.length === 0) return;
+            const formData = new FormData();
+            for (let file of files) {
+                formData.append('files', file);
+            }
+            
+            showToast('开始上传', `正在上传 ${files.length} 个文件...`, 'info');
+            try {
+                const response = await fetch('/files/batch-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.code === 200) {
+                    showToast('批量上传成功', result.msg, 'success');
+                } else {
+                    throw new Error(result.msg);
+                }
+            } catch (err) {
+                showToast('批量上传失败', err.message, 'error');
+            }
+        }
+
+        // ================= IMPORT & EXPORT =================
+
+        // Excel 导入
+        async function importExcel() {
+            const fileInput = document.getElementById('excel-import-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('未选择文件', '请先选择需要导入的 Excel/CSV 文件', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            showToast('导入中', '正在解析 Excel 文件并将用户保存至数据库...', 'info');
+            try {
+                const response = await fetch('/users/import', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.code === 200) {
+                    showToast('导入成功', `成功导入并落库 ${result.data.userList.length} 条用户数据`, 'success');
+                    fileInput.value = ''; // 清空
+                    loadUsers();
+                } else {
+                    throw new Error(result.msg);
+                }
+            } catch (err) {
+                showToast('导入失败', err.message, 'error');
+            }
+        }
+
+        // 获取选中的导出字段
+        function getSelectedExportFields() {
+            const checkboxes = document.querySelectorAll('input[name="export-fields"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // 浏览器同步下载文件
+        async function exportToBrowser() {
+            const fileName = document.getElementById('export-filename').value;
+            const fieldList = getSelectedExportFields();
+            if (!fileName) {
+                showToast('缺少参数', '请指定导出文件名', 'error');
+                return;
+            }
+            
+            showToast('开始生成', '正在下载 Excel 导出包...', 'info');
+            try {
+                const response = await fetch('/users/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_name: fileName, field_list: fieldList })
+                });
+                
+                if (!response.ok) throw new Error('导出下载失败');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                showToast('导出成功', `文件 ${fileName} 已经成功保存到您的本地`, 'success');
+            } catch (err) {
+                showToast('导出失败', err.message, 'error');
+            }
+        }
+
+        // 后台异步导出到本地
+        async function exportToLocal() {
+            const fileName = document.getElementById('export-filename').value;
+            const fieldList = getSelectedExportFields();
+            if (!fileName) {
+                showToast('缺少参数', '请指定导出文件名', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/users/export/local', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_name: fileName, field_list: fieldList })
+                });
+                
+                if (response.ok) {
+                    showToast('任务已提交', '异步导出后台线程已启动，请查看右侧监控器状态', 'success');
+                    loadExportTasks(); // 刷新任务列表
+                } else {
+                    throw new Error('提交异步导出失败');
+                }
+            } catch (err) {
+                showToast('提交失败', err.message, 'error');
+            }
+        }
+
+        // ================= ASYNC EXPORT TASK MONITOR =================
+
+        // 状态文案和样式
+        function getStatusBadge(status) {
+            let label = '排队中';
+            if (status === 1) label = '导出中';
+            if (status === 2) label = '成功';
+            if (status === 3) label = '失败';
+            return `<span class="status-badge status-${status}">${label}</span>`;
+        }
+
+        // 加载导出任务列表
+        async function loadExportTasks() {
+            try {
+                const response = await fetch('/export-tasks');
+                if (!response.ok) throw new Error('刷新任务列表失败');
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    const tasks = result.data.exportTaskList;
+                    const tbody = document.getElementById('task-table-body');
+                    tbody.innerHTML = '';
+                    
+                    if (tasks.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">暂无导出记录</td></tr>`;
+                        return;
+                    }
+                    
+                    tasks.forEach(task => {
+                        const createTime = task.create_time ? task.create_time.replace('T', ' ') : '-';
+                        const fileSizeLabel = task.file_size ? formatBytes(task.file_size) : '-';
+                        
+                        let actionButton = '-';
+                        if (task.export_status === 2 && task.file_path) {
+                            actionButton = `
+                                <div class="btn-group" style="justify-content: center; display: inline-flex;">
+                                    <a href="${task.file_path}" class="btn btn-primary btn-sm" download>下载</a>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteExportTask(${task.id})">删除</button>
+                                </div>
+                            `;
+                        } else if (task.export_status === 3 && task.fail_reason) {
+                            actionButton = `
+                                <div class="btn-group" style="justify-content: center; display: inline-flex;">
+                                    <button class="btn btn-secondary btn-sm" onclick="alert('错误原因:\\n${task.fail_reason.replace(/'/g, "\\'")}')">查看错误</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteExportTask(${task.id})">删除</button>
+                                </div>
+                            `;
+                        } else if (task.export_status === 1) {
+                            actionButton = `<span class="spinner"></span>`;
+                        }
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="font-weight:600; color:var(--primary)">${task.id}</td>
+                            <td>${getStatusBadge(task.export_status)}</td>
+                            <td>${fileSizeLabel}</td>
+                            <td style="font-size:0.75rem; color:var(--text-secondary)">${createTime}</td>
+                            <td>${actionButton}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 删除失败的导出任务
+        async function deleteExportTask(id) {
+            if (!confirm(`确定要删除任务 ${id} 吗？`)) return;
+            try {
+                const response = await fetch(`/export-tasks/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.code === 200) {
+                    showToast('删除成功', `任务 ${id} 已被删除`, 'success');
+                    loadExportTasks();
+                } else {
+                    throw new Error(result.msg || '删除失败');
+                }
+            } catch (err) {
+                showToast('操作失败', err.message, 'error');
+            }
+        }
+
+        // 定时轮询器
+        setInterval(() => {
+            const autoRefresh = document.getElementById('auto-refresh').checked;
+            if (autoRefresh) {
+                loadExportTasks();
+            }
+        }, 5000);
+
+        // 初始化加载
+        window.onload = () => {
+            updateThemeIcons(savedTheme);
+            loadUsers();
+            loadExportTasks();
+        }
+    </script>
 </body>
 </html>

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = CustomException.class)
     public Result handleAccessDeniedException(CustomException customException) {
         String message = customException.getMessage();
-        error(customException);
+        log.warn("【业务异常】code: {}, message: {}", customException.getCode(), message);
         return Result.fail(customException.getCode(), message);
     }
 
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> errorMap = new HashMap<>();
         methodArgumentNotValidException.getBindingResult().getFieldErrors()
                 .forEach(fieldError -> errorMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
-        error(methodArgumentNotValidException);
+        log.warn("【参数校验异常】{}", errorMap);
         return Result.fail(HttpStatus.BAD_REQUEST.value(), "方法参数无效", errorMap);
     }
 
@@ -64,10 +65,22 @@ public class GlobalExceptionHandler {
         for (ConstraintViolation<?> constraintViolation : constraintViolationException.getConstraintViolations()) {
             errorMap.put(constraintViolation.getPropertyPath().toString().split("\\.")[1], constraintViolation.getMessage());
         }
-        error(constraintViolationException);
+        log.warn("【单参数校验异常】{}", errorMap);
         return Result.fail(HttpStatus.BAD_REQUEST.value(), "方法参数无效", errorMap);
     }
 
+
+    /**
+     * 处理参数反序列化异常
+     *
+     * @param e Http消息不可读异常
+     * @return 通用响应对象
+     */
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public Result handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.warn("【参数反序列化异常】{}", e.getMessage());
+        return Result.fail(HttpStatus.BAD_REQUEST.value(), "请求参数格式错误: " + e.getMessage());
+    }
 
     /**
      * 处理未知异常
@@ -77,16 +90,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     public Result handleException(Exception e) {
-        error(e);
+        log.error("【系统未知异常】错误信息: {}, 异常类型: {}", e.getMessage(), e.getClass(), e);
         return Result.fail(203, e.getMessage());
-    }
-
-    /**
-     * 打印错误信息
-     *
-     * @param e 异常
-     */
-    private void error(Exception e) {
-        log.error("错误信息: {} 异常类型: {}", e.getMessage(), e.getClass());
     }
 }

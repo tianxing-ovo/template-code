@@ -19,9 +19,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ScheduledTask {
 
-    // 秒 分 时 日 月 周
-    private final String cron = "* * * * * ?";
-
     private final RedissonUtil redissonUtil;
 
     /**
@@ -51,9 +48,9 @@ public class ScheduledTask {
     }
 
     /**
-     * 每秒执行一次
+     * 执行定时任务
      */
-    @Scheduled(cron = cron)
+    @Scheduled(cron = "${scheduled.task.cron:0 */1 * * * ?}")
     @Async
     public void runTask() {
         runTask(() -> log.info("定时任务执行中..."), "lock", 1, 1);

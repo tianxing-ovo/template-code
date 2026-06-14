@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 上传和下载控制器
+ * 文件控制器
  *
  * @author tianxing
  */
 @RestController
 @Slf4j
-public class UploadAndDownloadController {
+public class FileController {
 
     /**
      * 提取安全的文件名(防止路径遍历攻击)
@@ -104,7 +104,7 @@ public class UploadAndDownloadController {
         HttpHeaders headers = new HttpHeaders();
         // "application/octet-stream"
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+        fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
         // 附件
         headers.setContentDispositionFormData("attachment", fileName);
         return ResponseEntity.ok().headers(headers).body(resource);
