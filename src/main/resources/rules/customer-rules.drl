@@ -1,5 +1,5 @@
 package rules;
-import com.ltx.drools.entity.*;
+import com.ltx.entity.drools.*;
 
 rule "customer-rule1"
 when

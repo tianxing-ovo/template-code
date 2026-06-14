@@ -4,7 +4,7 @@
 <mapper namespace="com.ltx.mapper.TempMapper">
     <resultMap id="tempMap" type="com.ltx.entity.po.Temp">
         <result column="person" property="person" javaType="java.util.List" jdbcType="VARCHAR"
-                typeHandler="com.ltx.typehandler.ListTypeHandler"/>
+                typeHandler="com.ltx.common.typehandler.ListTypeHandler"/>
         <result column="id" property="id"/>
         <result column="risk_type" property="riskType"/>
         <result column="service_name" property="serviceName"/>
@@ -12,7 +12,7 @@
     <insert id="insert">
         insert into temp(id, service_name, risk_type, person)
         values (#{temp.id}, #{temp.serviceName}, #{temp.riskType},
-                #{temp.person,javaType=java.util.List,jdbcType=VARCHAR,typeHandler=com.ltx.typehandler.ListTypeHandler})
+                #{temp.person,javaType=java.util.List,jdbcType=VARCHAR,typeHandler=com.ltx.common.typehandler.ListTypeHandler})
     </insert>
     <select id="select" resultMap="tempMap">
         select id, service_name, risk_type, person

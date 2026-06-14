@@ -1,6 +1,6 @@
 package com.ltx.controller;
 
-import com.ltx.entity.Result;
+import com.ltx.common.Result;
 import com.ltx.service.ExportTaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;

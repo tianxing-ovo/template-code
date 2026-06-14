@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    @Cacheable(value = "userCache", key = "T(com.ltx.constant.RedisConstant).CACHE_USER_KEY + (#requestBody.id == null && #requestBody.age == null && #requestBody.name == null ? 'allUsers' : #requestBody.id + ':' + #requestBody.age + ':' + #requestBody.name)", unless = "#result == null || #result.size() == 0")
+    @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + (#requestBody.id == null && #requestBody.age == null && #requestBody.name == null ? 'allUsers' : #requestBody.id + ':' + #requestBody.age + ':' + #requestBody.name)", unless = "#result == null || #result.size() == 0")
     public List<User> queryUserList(UserRequestBody requestBody) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         if (requestBody != null) {
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "userCache", key = "T(com.ltx.constant.RedisConstant).CACHE_USER_KEY + #id", unless = "#result == null")
+    @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + #id", unless = "#result == null")
     public User getUserById(Integer id) {
         return userMapper.selectById(id);
     }

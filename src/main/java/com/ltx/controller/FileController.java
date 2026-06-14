@@ -1,7 +1,7 @@
 package com.ltx.controller;
 
-import com.ltx.constant.Constant;
-import com.ltx.entity.Result;
+import com.ltx.common.constant.Constant;
+import com.ltx.common.Result;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;

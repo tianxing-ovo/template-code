@@ -2,9 +2,9 @@ package com.ltx.entity.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ltx.enums.Sex;
-import com.ltx.valid.InsertGroup;
-import com.ltx.valid.ListValue;
-import com.ltx.valid.UpdateGroup;
+import com.ltx.common.valid.InsertGroup;
+import com.ltx.common.valid.ListValue;
+import com.ltx.common.valid.UpdateGroup;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,7 +1,7 @@
 package com.ltx.scheduled;
 
 
-import com.ltx.util.RedissonUtil;
+import com.ltx.common.util.RedissonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;

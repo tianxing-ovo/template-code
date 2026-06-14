@@ -1,11 +1,11 @@
 package com.ltx.aop;
 
-import com.ltx.annotation.PreAuthorize;
+import com.ltx.common.annotation.PreAuthorize;
 import com.ltx.entity.po.User;
 import com.ltx.enums.ErrorCode;
 import com.ltx.enums.Role;
-import com.ltx.exception.CustomException;
-import com.ltx.util.UserContext;
+import com.ltx.common.exception.CustomException;
+import com.ltx.common.util.UserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;

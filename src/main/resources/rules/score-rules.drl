@@ -1,5 +1,5 @@
 package rules;
-import com.ltx.drools.entity.Order;
+import com.ltx.entity.drools.Order;
 
 rule "score-rule1"
 when

@@ -1,7 +1,7 @@
 package com.ltx.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.ltx.constant.DatasourceConstant;
+import com.ltx.common.constant.DatasourceConstant;
 import com.ltx.entity.po.Temp;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;

@@ -3,7 +3,7 @@ package com.ltx.service;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ltx.entity.po.User;
-import com.ltx.exception.CustomException;
+import com.ltx.common.exception.CustomException;
 import com.ltx.listener.UserListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
