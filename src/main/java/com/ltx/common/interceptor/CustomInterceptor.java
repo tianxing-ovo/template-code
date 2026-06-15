@@ -33,7 +33,7 @@ public class CustomInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-                             @NonNull Object handler) {
+            @NonNull Object handler) {
         log.info("preHandle");
         User user = new User();
         user.setId(1);
@@ -54,7 +54,7 @@ public class CustomInterceptor implements HandlerInterceptor {
      */
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-                           @NonNull Object handler, ModelAndView modelAndView) {
+            @NonNull Object handler, ModelAndView modelAndView) {
         log.info("postHandle");
     }
 
@@ -70,7 +70,7 @@ public class CustomInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-                                @NonNull Object handler, Exception ex) {
+            @NonNull Object handler, Exception ex) {
         log.info("afterCompletion");
         // 清除ThreadLocal中的用户信息(避免内存泄漏)
         UserContext.remove();

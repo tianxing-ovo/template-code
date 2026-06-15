@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Template Code 控制台</title>
+    <!-- 立即读取本地主题配置，防止页面闪烁 -->
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
     <!-- 引入高档英文字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -448,7 +453,8 @@
             background-color: rgba(15, 23, 42, 0.015);
         }
 
-        /* 导出任务表格居中对齐且不换行 */
+        /* 用户与导出任务表格居中对齐且不换行 */
+        #user-table th, #user-table td,
         #task-table th, #task-table td {
             text-align: center;
             white-space: nowrap;
@@ -626,6 +632,245 @@
             color: var(--text-secondary);
             cursor: pointer;
         }
+
+        /* 标签输入框容器 */
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 42px;
+            padding: 0.4rem 0.75rem;
+            background-color: var(--bg-control);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+        
+        .tags-input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+        }
+
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        :root[data-theme="light"] .tag-badge {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .tag-badge .remove-tag {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            line-height: 1;
+            color: var(--primary);
+            opacity: 0.7;
+        }
+
+        .tag-badge .remove-tag:hover {
+            opacity: 1;
+        }
+
+        .tags-input-container input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            min-width: 100px;
+            padding: 0.25rem 0;
+        }
+
+        /* 顶部用户头像及下拉菜单 */
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--border-subtle);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45);
+            border-color: var(--primary);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 240px;
+            background: var(--bg-toast);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(24px) saturate(180%);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            z-index: 1000;
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+
+        .profile-dropdown.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        :root[data-theme="light"] .profile-dropdown {
+            box-shadow: 0 20px 40px -5px rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dropdown-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .dropdown-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .dropdown-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.15);
+        }
+
+        .dropdown-user-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            overflow: hidden;
+        }
+
+        .dropdown-user-text .user-name {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-user-text .user-username {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-header .status-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-subtle);
+            margin: 0.15rem 0;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dropdown-item svg {
+            opacity: 0.8;
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--primary);
+        }
+        
+        .dropdown-item:hover svg {
+            transform: translateX(2px);
+            opacity: 1;
+        }
+
+        :root[data-theme="light"] .dropdown-item:hover {
+            background: rgba(79, 70, 229, 0.06);
+        }
+
+        .dropdown-item.logout-btn:hover {
+            background: var(--error-glow);
+            color: var(--error);
+        }
+        
+        .dropdown-item.logout-btn:hover svg {
+            transform: translateX(2px);
+        }
     </style>
 </head>
 <body>
@@ -652,7 +897,35 @@
                 </svg>
             </button>
             <span class="status-badge status-2">在线</span>
-            <span>当前登录：ID 1 (模拟)</span>
+            <!-- 用户头像及下拉菜单 -->
+            <div class="profile-container">
+                <div class="user-avatar" id="user-avatar" onclick="toggleProfileDropdown(event)">U</div>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-avatar" id="dropdown-avatar">U</div>
+                            <div class="dropdown-user-text">
+                                <div class="user-name" id="dropdown-user-name">未登录</div>
+                                <div class="user-username" id="dropdown-user-username">@Guest</div>
+                            </div>
+                        </div>
+                        <span class="status-badge" id="dropdown-user-role">-</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="showToast('提示', '详情中心建设中...', 'info')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        个人中心
+                    </button>
+                    <button class="dropdown-item logout-btn" onclick="logout()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
+                        退出登录
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -706,6 +979,7 @@
                                 <th>年龄</th>
                                 <th>性别</th>
                                 <th>城市</th>
+                                <th>兴趣爱好</th>
                                 <th>描述</th>
                                 <th>角色</th>
                                 <th>操作</th>
@@ -786,8 +1060,10 @@
                         <div class="field-checkbox-container">
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="id" checked> ID</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="name" checked> 姓名</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="username" checked> 用户名</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="age" checked> 年龄</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="sex" checked> 性别</label>
+                            <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="hobbies" checked> 兴趣爱好</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="password" checked> 密码</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="province" checked> 省份</label>
                             <label class="field-checkbox-label"><input type="checkbox" name="export-fields" value="city" checked> 城市</label>
@@ -851,10 +1127,14 @@
             </div>
             <form id="add-user-form" onsubmit="submitAddUser(event)">
                 <input type="hidden" id="edit-user-id">
-                <div class="form-row form-row-2">
+                <div class="form-row form-row-3">
                     <div class="form-group">
                         <label class="form-label">姓名 *</label>
                         <input type="text" id="add-name" class="form-control" required placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">用户名 *</label>
+                        <input type="text" id="add-username" class="form-control" required placeholder="请输入用户名">
                     </div>
                     <div class="form-group">
                         <label class="form-label" id="password-label">密码 *</label>
@@ -904,6 +1184,14 @@
                     <label class="form-label">详细地址 *</label>
                     <input type="text" id="add-address" class="form-control" required placeholder="如：南山区科兴科学园">
                 </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">兴趣爱好</label>
+                    <div class="tags-input-container" id="hobbies-tags-container">
+                        <!-- Tags will be dynamically generated here -->
+                        <input type="text" id="tags-input-field" placeholder="输入爱好并按回车或逗号分隔">
+                    </div>
+                    <input type="hidden" id="add-hobbies">
+                </div>
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label class="form-label">个人描述</label>
                     <textarea id="add-description" class="form-control" rows="2" placeholder="介绍一下你自己..."></textarea>
@@ -918,6 +1206,109 @@
 
     <!-- JavaScript 交互逻辑 -->
     <script>
+        // ================= JWT AUTHENTICATION INTERCEPTOR =================
+        // 1. 拦截全局 fetch 请求，自动注入 token，并处理 token 错误跳转
+        const originalFetch = window.fetch;
+        window.fetch = async function (url, options = {}) {
+            options.headers = options.headers || {};
+            const token = localStorage.getItem('token');
+            if (token) {
+                options.headers['token'] = token;
+            }
+            const response = await originalFetch(url, options);
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                const clone = response.clone();
+                try {
+                    const json = await clone.json();
+                    if ([203, 204, 205, 206, 207].includes(json.code)) {
+                        localStorage.removeItem('token');
+                        window.location.href = '/login';
+                    }
+                } catch (e) {}
+            }
+            return response;
+        };
+
+        // 2. 检查本地是否存在 token，如果不存在直接重定向到登录页面
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/login';
+        }
+
+        // 3. 解析 JWT 获取当前登录用户信息
+        function getCurrentUser() {
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            try {
+                const parts = token.split('.');
+                if (parts.length !== 3) return null;
+                const payloadBase64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+                const jsonStr = decodeURIComponent(escape(window.atob(payloadBase64)));
+                const payload = JSON.parse(jsonStr);
+                return payload.user;
+            } catch (e) {
+                console.error('解析 token 失败', e);
+                return null;
+            }
+        }
+
+        // 4. 更新头部登录人信息
+        function updateLoginStatus() {
+            const user = getCurrentUser();
+            const avatarDiv = document.getElementById('user-avatar');
+            const dropAvatarDiv = document.getElementById('dropdown-avatar');
+            const nameDiv = document.getElementById('dropdown-user-name');
+            const usernameDiv = document.getElementById('dropdown-user-username');
+            const roleSpan = document.getElementById('dropdown-user-role');
+            
+            if (user) {
+                const displayName = user.name || user.username || 'User';
+                const firstChar = displayName.charAt(0).toUpperCase();
+                avatarDiv.textContent = firstChar;
+                if (dropAvatarDiv) dropAvatarDiv.textContent = firstChar;
+                nameDiv.textContent = displayName;
+                usernameDiv.textContent = `@${user.username}`;
+                
+                const isAdmin = user.role === 'ADMIN' || user.role === '管理员';
+                roleSpan.textContent = isAdmin ? '管理员' : '普通用户';
+                roleSpan.className = `status-badge ${isAdmin ? 'status-1' : 'status-0'}`;
+            } else {
+                avatarDiv.textContent = 'U';
+                if (dropAvatarDiv) dropAvatarDiv.textContent = 'U';
+                nameDiv.textContent = '未登录';
+                usernameDiv.textContent = '@Guest';
+                roleSpan.textContent = '-';
+                roleSpan.className = 'status-badge';
+            }
+        }
+
+        // 下拉菜单逻辑
+        window.toggleProfileDropdown = function(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+        };
+
+        document.addEventListener('click', (event) => {
+            const dropdown = document.getElementById('profile-dropdown');
+            const avatar = document.getElementById('user-avatar');
+            if (dropdown && dropdown.classList.contains('show') && event.target !== avatar && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // 5. 退出登录
+        async function logout() {
+            if (!confirm('确定要退出登录吗？')) return;
+            try {
+                await fetch('/logout', { method: 'POST' });
+            } catch (err) {
+                console.error('退出请求失败', err);
+            } finally {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        }
+
         // 主题切换逻辑
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -943,10 +1334,6 @@
                 moonIcon.style.display = 'none';
             }
         }
-
-        // 初始化主题设置
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
 
         // 消息通知通知组件
         function showToast(title, desc, type = 'info') {
@@ -1017,18 +1404,28 @@
                 tbody.innerHTML = '';
                 
                 if (users.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">暂无用户数据</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted);">暂无用户数据</td></tr>`;
                     return;
                 }
                 
                 users.forEach(user => {
                     const row = document.createElement('tr');
+                    
+                    // Render hobbies as tags
+                    let hobbiesHtml = '-';
+                    if (user.hobbies && user.hobbies.length > 0) {
+                        hobbiesHtml = user.hobbies
+                            .map(h => `<span class="tag-badge" style="margin: 2px; font-size: 0.75rem; padding: 0.15rem 0.4rem;">${h}</span>`)
+                            .join('');
+                    }
+
                     row.innerHTML = `
                         <td style="font-weight:600; color:var(--primary)">${user.id}</td>
                         <td>${user.name || '-'}</td>
                         <td>${user.age || '-'}</td>
                         <td>${user.sex || '-'}</td>
                         <td>${user.city || '-'}</td>
+                        <td style="white-space: normal;"><div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; min-width: 120px; max-width: 250px;">${hobbiesHtml}</div></td>
                         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${user.description || ''}">${user.description || '-'}</td>
                         <td><span class="status-badge ${user.role === '管理员' ? 'status-1' : 'status-0'}">${user.role || '-'}</span></td>
                         <td>
@@ -1134,8 +1531,11 @@
             document.getElementById('password-label').innerHTML = '密码 *';
             document.getElementById('add-password').required = true;
             document.getElementById('edit-user-id').value = '';
+            document.getElementById('add-username').value = '';
 
             initProvinceSelect();
+            tagsArray = [];
+            renderTags();
             document.getElementById('add-user-modal').classList.add('show');
         }
         function closeAddModal() {
@@ -1143,6 +1543,8 @@
             document.getElementById('add-user-form').reset();
             document.getElementById('edit-user-id').value = '';
             document.getElementById('add-city').innerHTML = '<option value="">请选择城市</option>';
+            tagsArray = [];
+            renderTags();
         }
 
         // 打开编辑模态框
@@ -1161,8 +1563,12 @@
                     throw new Error(result.msg || '获取用户详情失败');
                 }
                 const user = result.data.user;
+                if (!user) {
+                    throw new Error('用户不存在或已被删除');
+                }
                 
                 document.getElementById('add-name').value = user.name || '';
+                document.getElementById('add-username').value = user.username || '';
                 document.getElementById('add-age').value = user.age || '';
                 document.getElementById('add-sex').value = user.sex || '男';
                 document.getElementById('add-role').value = user.role || '普通用户';
@@ -1174,6 +1580,11 @@
                         document.getElementById('add-city').value = user.city;
                     }
                 }
+                
+                const hobbiesValue = (user.hobbies && user.hobbies.length) ? user.hobbies.join(',') : '';
+                document.getElementById('add-hobbies').value = hobbiesValue;
+                tagsArray = hobbiesValue ? hobbiesValue.split(',').map(s => s.trim()).filter(Boolean) : [];
+                renderTags();
                 
                 document.getElementById('add-address').value = user.address || '';
                 document.getElementById('add-description').value = user.description || '';
@@ -1191,19 +1602,21 @@
             const passwordVal = document.getElementById('add-password').value;
             const payload = {
                 name: document.getElementById('add-name').value,
+                username: document.getElementById('add-username').value.trim(),
                 age: parseInt(document.getElementById('add-age').value) || null,
                 sex: document.getElementById('add-sex').value,
                 province: document.getElementById('add-province').value,
                 city: document.getElementById('add-city').value || null,
                 address: document.getElementById('add-address').value,
+                hobbies: document.getElementById('add-hobbies').value ? document.getElementById('add-hobbies').value.split(',').map(s => s.trim()).filter(Boolean) : [],
                 description: document.getElementById('add-description').value || null,
                 role: document.getElementById('add-role').value
             };
 
             if (passwordVal) {
-                payload.password = [passwordVal];
+                payload.password = passwordVal;
             } else if (!editId) {
-                payload.password = [];
+                payload.password = "";
             }
 
             try {
@@ -1479,11 +1892,86 @@
             }
         }, 5000);
 
+        // ================= TAGS INPUT LOGIC =================
+        let tagsArray = [];
+
+        function renderTags() {
+            const container = document.getElementById('hobbies-tags-container');
+            const inputField = document.getElementById('tags-input-field');
+            if (!container || !inputField) return;
+            
+            // Remove existing tag badges
+            container.querySelectorAll('.tag-badge').forEach(b => b.remove());
+            
+            // Add new badges before the input field
+            tagsArray.forEach((tag, index) => {
+                const badge = document.createElement('span');
+                badge.className = 'tag-badge';
+                badge.innerHTML = `${tag} <span class="remove-tag" onclick="removeTag(${index})">&times;</span>`;
+                container.insertBefore(badge, inputField);
+            });
+            
+            // Update hidden input
+            document.getElementById('add-hobbies').value = tagsArray.join(',');
+        }
+
+        function addTag(tagText) {
+            tagText = tagText.trim();
+            if (tagText && !tagsArray.includes(tagText)) {
+                tagsArray.push(tagText);
+                renderTags();
+            }
+        }
+
+        window.removeTag = function(index) {
+            tagsArray.splice(index, 1);
+            renderTags();
+        };
+
+        function initTagsInput() {
+            const container = document.getElementById('hobbies-tags-container');
+            const inputField = document.getElementById('tags-input-field');
+            if (!container || !inputField) return;
+            
+            container.addEventListener('click', (e) => {
+                if (e.target === container || e.target.classList.contains('tag-badge')) {
+                    inputField.focus();
+                }
+            });
+            
+            inputField.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag(inputField.value);
+                    inputField.value = '';
+                } else if (e.key === 'Backspace' && inputField.value === '') {
+                    tagsArray.pop();
+                    renderTags();
+                }
+            });
+            
+            inputField.addEventListener('input', (e) => {
+                const val = inputField.value;
+                if (val.includes(',') || val.includes('，')) {
+                    const tags = val.split(/[，,]/);
+                    tags.forEach(t => addTag(t));
+                    inputField.value = '';
+                }
+            });
+
+            inputField.addEventListener('blur', () => {
+                addTag(inputField.value);
+                inputField.value = '';
+            });
+        }
+
         // 初始化加载
         window.onload = () => {
             updateThemeIcons(savedTheme);
+            updateLoginStatus();
             loadUsers();
             loadExportTasks();
+            initTagsInput();
         }
     </script>
 </body>

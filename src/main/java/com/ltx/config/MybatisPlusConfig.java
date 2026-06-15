@@ -2,8 +2,12 @@ package com.ltx.config;
 
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,7 +19,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class MybatisPlusConfig {
+
+    private final ObjectMapper objectMapper;
+
+    /**
+     * 初始化JacksonTypeHandler
+     */
+    @PostConstruct
+    public void initJacksonTypeHandler() {
+        JacksonTypeHandler.setObjectMapper(objectMapper);
+    }
 
     /**
      * 添加分页插件

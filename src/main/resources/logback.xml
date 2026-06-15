@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <logger name="org.springframework" level="info"/>
-    <logger name="com.ltx.Application" level="info"/>
+    <logger name="org.springframework" level="warn"/>
+    <logger name="org.apache.tomcat" level="warn"/>
+    <logger name="org.apache.catalina" level="warn"/>
+    <logger name="org.mybatis" level="warn"/>
+    <logger name="com.baomidou.mybatisplus" level="warn"/>
+    <logger name="com.ltx" level="debug"/>
     <logger name="com.zaxxer.hikari.HikariDataSource" level="off"/>
 </configuration>

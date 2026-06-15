@@ -9,6 +9,7 @@ import com.ltx.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + (#requestBody.id == null && #requestBody.age == null && #requestBody.name == null ? 'allUsers' : #requestBody.id + ':' + #requestBody.age + ':' + #requestBody.name)", unless = "#result == null || #result.size() == 0")
@@ -41,6 +43,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @CacheEvict(value = "userCache", allEntries = true)
     public User addUser(User user) {
+        String password = user.getPassword();
+        // 对密码进行加密
+        if (StrUtil.isNotBlank(password)) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
         userMapper.insert(user);
         return user;
     }
@@ -61,6 +68,11 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "userCache", allEntries = true)
     public void updateUser(Integer id, User user) {
         user.setId(id);
+        String password = user.getPassword();
+        // 对密码进行加密
+        if (StrUtil.isNotBlank(password)) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
         userMapper.updateById(user);
     }
 }

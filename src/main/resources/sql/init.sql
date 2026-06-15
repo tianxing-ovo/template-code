@@ -4,21 +4,30 @@ create database if not exists template_code character set utf8mb4 collate utf8mb
 -- 选择数据库
 use template_code;
 
+-- 删除用户表
+drop table if exists user;
+
 -- 创建用户表
-create table if not exists user
+create table user
 (
-    id          int auto_increment comment '用户主键' primary key,
-    name        varchar(50)  null comment '姓名',
-    age         int          null comment '年龄',
-    sex         tinyint      null comment '性别',
-    password    json         null comment '密码列表',
-    province    varchar(50)  null comment '省份',
-    address     varchar(255) null comment '地址',
-    city        varchar(50)  null comment '城市',
-    description varchar(255) null comment '描述',
-    create_time datetime     null comment '创建时间',
-    update_time datetime     null comment '更新时间',
-    role        varchar(50)  null comment '角色'
+    id                      int auto_increment comment '用户主键' primary key,
+    name                    varchar(50)       null comment '姓名',
+    username                varchar(50)       null comment '用户名',
+    age                     int               null comment '年龄',
+    sex                     tinyint           null comment '性别',
+    password                varchar(100)      null comment '密码',
+    hobbies                 json              null comment '兴趣爱好列表',
+    province                varchar(50)       null comment '省份',
+    address                 varchar(255)      null comment '地址',
+    city                    varchar(50)       null comment '城市',
+    description             varchar(255)      null comment '描述',
+    create_time             datetime          null comment '创建时间',
+    update_time             datetime          null comment '更新时间',
+    role                    varchar(50)       null comment '角色',
+    account_non_expired     tinyint(1) default 1 null comment '账户未过期',
+    account_non_locked      tinyint(1) default 1 null comment '账户未锁定',
+    credentials_non_expired tinyint(1) default 1 null comment '密码未过期',
+    enabled                 tinyint(1) default 1 null comment '账号启用'
 ) engine = InnoDB
   default charset = utf8mb4 comment ='用户表';
 
@@ -39,8 +48,8 @@ create table if not exists export_task
     user_id       int          not null comment '提交任务的用户ID',
     file_name     varchar(255) not null comment '导出文件名',
     file_path     varchar(512) null comment '文件下载接口相对路径或OSS下载Url',
-    file_size     bigint       null default 0 comment '文件大小',
-    total_records int          null default 0 comment '导出的总数据条数',
+    file_size     bigint       null     default 0 comment '文件大小',
+    total_records int          null     default 0 comment '导出的总数据条数',
     export_status tinyint      not null default 0 comment '导出状态',
     fail_reason   varchar(512) null comment '任务失败时的原因描述',
     create_time   datetime     not null default current_timestamp comment '任务创建时间',

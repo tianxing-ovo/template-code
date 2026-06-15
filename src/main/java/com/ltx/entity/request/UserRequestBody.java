@@ -29,6 +29,8 @@ public class UserRequestBody {
     @NotNull(groups = InsertGroup.class)
     private String name;
 
+    private String username;
+
     @Max(20)
     private Integer age;
 
@@ -37,7 +39,9 @@ public class UserRequestBody {
 
     private Sex sex;
 
-    private List<String> password;
+    private String password;
+
+    private List<String> hobbies;
 
     @NotEmpty
     private String province;
@@ -49,6 +53,11 @@ public class UserRequestBody {
     private String city;
 
     private String description;
+
+    private Boolean accountNonExpired;
+    private Boolean accountNonLocked;
+    private Boolean credentialsNonExpired;
+    private Boolean enabled;
 
     @JsonProperty("start_date")
     private LocalDate startDate;

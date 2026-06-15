@@ -35,16 +35,22 @@ public class User {
     @ExcelProperty(value = "姓名")
     @ColumnWidth(10)
     private String name;
+    @ExcelProperty(value = "用户名")
+    @ColumnWidth(12)
+    private String username;
     @ExcelProperty(value = "年龄")
     @ColumnWidth(8)
     private Integer age;
     @ExcelProperty(value = "性别", converter = SexConverter.class)
     @ColumnWidth(8)
     private Sex sex;
-    @ExcelProperty(value = "密码", converter = ListConverter.class)
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @ExcelProperty(value = "密码")
     @ColumnWidth(12)
-    private List<String> password = new ArrayList<>();
+    private String password;
+    @ExcelProperty(value = "兴趣爱好", converter = ListConverter.class)
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    @ColumnWidth(15)
+    private List<String> hobbies = new ArrayList<>();
     @ExcelProperty(value = "省份")
     @ColumnWidth(12)
     private String province;
@@ -70,4 +76,12 @@ public class User {
     @ExcelProperty(value = "角色", converter = RoleConverter.class)
     @ColumnWidth(10)
     private Role role;
+    @TableField(value = "account_non_expired")
+    private Boolean accountNonExpired = true;
+    @TableField(value = "account_non_locked")
+    private Boolean accountNonLocked = true;
+    @TableField(value = "credentials_non_expired")
+    private Boolean credentialsNonExpired = true;
+    @TableField(value = "enabled")
+    private Boolean enabled = true;
 }
