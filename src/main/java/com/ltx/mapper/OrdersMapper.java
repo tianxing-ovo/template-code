@@ -1,12 +1,12 @@
 package com.ltx.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ltx.entity.po.User;
+import com.ltx.entity.po.Orders;
 
 /**
- * 用户Mapper
+ * 订单Mapper
  *
  * @author tianxing
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface OrdersMapper extends BaseMapper<Orders> {
 }

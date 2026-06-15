@@ -1,0 +1,44 @@
+databaseName: template_code
+mode:
+  type: Standalone
+  repository:
+    type: File
+    props:
+      path: ./metadata
+dataSources:
+  ds-master:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+  ds-slave-1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+  ds-slave-2:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+rules:
+  - !READWRITE_SPLITTING
+    dataSources:
+      replica-ds:
+        writeDataSourceName: ds-master
+        readDataSourceNames:
+          - ds-slave-1
+          - ds-slave-2
+        loadBalancerName: round-robin
+    loadBalancers:
+      round-robin:
+        type: ROUND_ROBIN
+  - !SINGLE
+    tables:
+      - "*.*"
+    defaultDataSource: replica-ds
+props:
+  sql-show: true
