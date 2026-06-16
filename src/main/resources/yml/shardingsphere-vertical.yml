@@ -1,0 +1,32 @@
+# ==========================================
+# ShardingSphere 垂直分库配置
+# ==========================================
+
+databaseName: template_code
+mode:
+  type: Standalone
+  repository:
+    type: File
+    props:
+      path: ./metadata
+dataSources:
+  ds_user:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3311/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+  ds_order:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3312/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+rules:
+  - !SINGLE
+    tables:
+      - "ds_user.user"
+      - "ds_order.orders"
+    defaultDataSource: ds_user
+props:
+  sql-show: true

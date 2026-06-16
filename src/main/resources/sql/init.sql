@@ -10,7 +10,7 @@ drop table if exists user;
 -- 创建用户表
 create table user
 (
-    id                      int auto_increment comment '用户主键' primary key,
+    id                      int auto_increment primary key comment '用户主键',
     name                    varchar(50)       null comment '姓名',
     username                varchar(50)       null comment '用户名',
     age                     int               null comment '年龄',
@@ -44,7 +44,7 @@ create table if not exists temp
 -- 创建数据导出任务表
 create table if not exists export_task
 (
-    id            bigint auto_increment comment '任务主键ID' primary key,
+    id            bigint auto_increment primary key comment '任务主键ID',
     user_id       int          not null comment '提交任务的用户ID',
     file_name     varchar(255) not null comment '导出文件名',
     file_path     varchar(512) null comment '文件下载接口相对路径或OSS下载Url',

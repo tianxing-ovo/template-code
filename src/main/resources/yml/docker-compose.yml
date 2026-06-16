@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  mysql-user:
+    image: mysql:8.0
+    container_name: vertical-db-user
+    ports:
+      - "3311:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: template_code
+    volumes:
+      - ../sql/init-user.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  mysql-order:
+    image: mysql:8.0
+    container_name: vertical-db-order
+    ports:
+      - "3312:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: template_code
+    volumes:
+      - ../sql/init-order.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
