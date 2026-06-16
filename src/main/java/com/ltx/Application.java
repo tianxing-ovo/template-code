@@ -1,7 +1,8 @@
 package com.ltx;
 
-import org.apache.catalina.util.ServerInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.apache.catalina.util.ServerInfo;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,7 @@ import jakarta.annotation.PostConstruct;
  *
  * @author tianxing
  */
+@Slf4j
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @SpringBootApplication
@@ -35,6 +37,6 @@ public class Application {
 
     @PostConstruct
     public void printTomcatVersion() {
-        System.out.println("Tomcat Version: " + ServerInfo.getServerInfo());
+        log.info("Tomcat Version: {}", ServerInfo.getServerInfo());
     }
 }

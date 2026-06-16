@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,7 +30,27 @@ public class OrdersMapperTest {
 
     @Test
     public void testInsert() {
-        // 路由到ds-master插入
+        // 路由到ds-master
+        doInsert();
+    }
+
+    @Test
+    public void testRead() {
+        // 路由到ds-slave1和ds-slave2
+        doRead();
+    }
+
+    @Test
+    @Transactional
+    public void testTransaction() {
+        // 事务内所有操作都路由到ds-master
+        doInsert();
+        doRead();
+        // 默认会执行回滚
+        log.info("执行回滚");
+    }
+
+    private void doInsert() {
         Orders order = new Orders();
         String timeStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         order.setOrderNo("ORD" + timeStr);
@@ -42,9 +63,7 @@ public class OrdersMapperTest {
         log.info("插入结果: {}, 订单ID: {}", result, order.getId());
     }
 
-    @Test
-    public void testRead() {
-        // 路由到ds-slave1和ds-slave2查询
+    private void doRead() {
         List<Orders> list = ordersMapper.selectList(null);
         log.info("查询到订单: {}", list);
     }

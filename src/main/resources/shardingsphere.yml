@@ -32,6 +32,7 @@ rules:
         readDataSourceNames:
           - ds-slave-1
           - ds-slave-2
+        transactionalReadQueryStrategy: PRIMARY
         loadBalancerName: round-robin
     loadBalancers:
       round-robin:

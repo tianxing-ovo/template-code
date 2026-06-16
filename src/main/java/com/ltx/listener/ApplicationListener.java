@@ -1,5 +1,6 @@
 package com.ltx.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
  *
  * @author tianxing
  */
+@Slf4j
 @Component
 public class ApplicationListener {
 
@@ -19,7 +21,7 @@ public class ApplicationListener {
      */
     @EventListener(ContextRefreshedEvent.class)
     public void handleContextRefreshEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        System.out.println(contextRefreshedEvent);
-        System.out.println("Application context refreshed!");
+        log.info("{}", contextRefreshedEvent);
+        log.info("Application context refreshed!");
     }
 }
