@@ -13,14 +13,15 @@ drop table if exists orders;
 create table orders
 (
     id           bigint auto_increment primary key comment '主键ID',
-    order_no     varchar(50)                                                     not null comment '订单号',
-    product_name varchar(100)                                                    not null comment '商品名称',
-    price        decimal(10, 2)                                                  not null comment '商品单价',
-    quantity     int                                                             not null comment '购买数量',
-    total_amount decimal(10, 2)                                                  not null comment '订单总金额',
-    status       tinyint   default 0                                             not null comment '状态',
-    create_time  timestamp default current_timestamp                             not null comment '创建时间',
-    update_time  timestamp default current_timestamp on update current_timestamp not null comment '更新时间'
+    order_no     varchar(50)                                                    not null comment '订单号',
+    product_name varchar(100)                                                   not null comment '商品名称',
+    price        decimal(10, 2)                                                 not null comment '商品单价',
+    quantity     int                                                            not null comment '购买数量',
+    total_amount decimal(10, 2)                                                 not null comment '订单总金额',
+    status       tinyint  default 0                                             not null comment '状态',
+    create_time  datetime default current_timestamp                             not null comment '创建时间',
+    update_time  datetime default current_timestamp on update current_timestamp not null comment '更新时间',
+    unique key uk_order_no (order_no)
 ) engine = InnoDB
   default charset = utf8mb4
   collate = utf8mb4_unicode_ci comment ='订单表';

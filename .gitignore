@@ -1,8 +1,6 @@
-
 /.mvn/
 /target/
 common-template.iml
 HELP.md
 mvnw
 mvnw.cmd
-/src/test/

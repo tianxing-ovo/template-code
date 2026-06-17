@@ -1,6 +1,7 @@
-package com.ltx.mapper;
+package com.ltx.sharding;
 
 import com.ltx.entity.po.Orders;
+import com.ltx.mapper.OrdersMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +14,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * 订单Mapper测试
+ * 读写分离测试
  *
  * @author tianxing
  */
 @Slf4j
 @SpringBootTest
-public class OrdersMapperTest {
+public class ReadWriteSplittingTest {
 
     private final OrdersMapper ordersMapper;
 
     @Autowired
-    public OrdersMapperTest(OrdersMapper ordersMapper) {
+    public ReadWriteSplittingTest(OrdersMapper ordersMapper) {
         this.ordersMapper = ordersMapper;
     }
 
