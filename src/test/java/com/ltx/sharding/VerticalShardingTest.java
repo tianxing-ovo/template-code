@@ -42,11 +42,10 @@ public class VerticalShardingTest {
     public void testReadBoth() {
         // 路由到ds_user
         List<User> users = userMapper.selectList(null);
-        log.info(users.toString());
-        users.forEach(user -> log.info(user.toString()));
+        users.forEach(user -> log.info("{}", user));
         // 路由到ds_order
         List<Orders> orders = ordersMapper.selectList(null);
-        log.info(orders.toString());
+        orders.forEach(order -> log.info("{}", order));
     }
 
     @Test
