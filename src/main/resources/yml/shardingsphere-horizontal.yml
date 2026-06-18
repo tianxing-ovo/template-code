@@ -1,0 +1,52 @@
+databaseName: template_code
+mode:
+  type: Standalone
+  repository:
+    type: File
+    props:
+      path: ./metadata-horizontal
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3321/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3322/template_code?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+rules:
+  - !SHARDING
+    tables:
+      message:
+        actualDataNodes: ds_${0..1}.message_${0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: message-database-inline
+        tableStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: message-table-inline
+        keyGenerateStrategy:
+          column: id
+          keyGeneratorName: snowflake
+    shardingAlgorithms:
+      message-database-inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds_$->{id % 2}
+      message-table-inline:
+        type: INLINE
+        props:
+          algorithm-expression: message_$->{(id % 4).intdiv(2)}
+    keyGenerators:
+      snowflake:
+        type: SNOWFLAKE
+        props:
+          max-vibration-offset: 3
+props:
+  sql-show: true

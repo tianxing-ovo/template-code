@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  mysql-ds0:
+    image: mysql:8.0
+    container_name: horizontal-db-ds0
+    ports:
+      - "3321:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: template_code
+      TZ: Asia/Shanghai
+    volumes:
+      - ../sql/init-message.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+08:00'
+  mysql-ds1:
+    image: mysql:8.0
+    container_name: horizontal-db-ds1
+    ports:
+      - "3322:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: template_code
+      TZ: Asia/Shanghai
+    volumes:
+      - ../sql/init-message.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+08:00'

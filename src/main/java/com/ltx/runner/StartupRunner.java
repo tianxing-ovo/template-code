@@ -8,6 +8,7 @@ import com.ltx.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.Collections;
  */
 @Component
 @Order(1)
+@ConditionalOnExpression("!'horizontal'.equals('${sharding.mode:rw}')")
 @RequiredArgsConstructor
 @Slf4j
 public class StartupRunner implements CommandLineRunner {

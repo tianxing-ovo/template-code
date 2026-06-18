@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 用户实体类
+ * 
  * @author tianxing
  */
 @Data
