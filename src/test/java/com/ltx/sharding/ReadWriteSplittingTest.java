@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author tianxing
  */
 @Slf4j
+@ActiveProfiles("sharding")
 @SpringBootTest
 public class ReadWriteSplittingTest {
 
@@ -38,7 +40,9 @@ public class ReadWriteSplittingTest {
     @Test
     public void testRead() {
         // 路由到ds-slave1和ds-slave2
-        doRead();
+        for (int i = 0; i < 2; i++) {
+            doRead();
+        }
     }
 
     @Test
@@ -65,7 +69,7 @@ public class ReadWriteSplittingTest {
     }
 
     private void doRead() {
-        List<Orders> list = ordersMapper.selectList(null);
-        log.info("查询到订单: {}", list);
+        List<Orders> ordersList = ordersMapper.selectList(null);
+        ordersList.forEach(order -> log.info("查询到订单: {}", order));
     }
 }

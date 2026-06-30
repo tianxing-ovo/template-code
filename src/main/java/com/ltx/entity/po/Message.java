@@ -1,5 +1,6 @@
 package com.ltx.entity.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 @TableName("message")
 public class Message {
 
+    /* 由ShardingSphere雪花算法生成 */
+    @TableId
     private Long id;
 
     private String title;

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author tianxing
  */
 @Slf4j
+@ActiveProfiles("sharding")
 @SpringBootTest(args = "--sharding.mode=horizontal")
 public class HorizontalShardingTest {
 
@@ -46,7 +48,8 @@ public class HorizontalShardingTest {
                 new Message("工单回复", "导出问题已处理"),
                 new Message("欢迎注册", "欢迎注册template-code")
         );
-        // id % 4 决定路由到哪个表
+        // id % 2 决定路由到哪个库
+        // (id % 4).intdiv(2) 决定路由到哪个表
         messages.forEach(message -> {
             messageMapper.insert(message);
             log.info("插入成功, id={}", message.getId());

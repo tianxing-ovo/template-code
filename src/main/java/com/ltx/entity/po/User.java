@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,6 +33,7 @@ import java.util.List;
 @SensitiveInfo({"province", "address", "password", "city"})
 @TableName(value = "user", autoResultMap = true)
 public class User {
+    @TableId
     @ColumnWidth(8)
     private Integer id;
     @ExcelProperty(value = "姓名")
