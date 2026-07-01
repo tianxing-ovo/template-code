@@ -9,10 +9,8 @@ import com.ltx.entity.po.User;
 import com.ltx.entity.request.ExportRequestBody;
 import com.ltx.entity.request.UserRequestBody;
 import com.ltx.enums.Role;
-import com.ltx.common.exception.CustomException;
 import com.ltx.service.UserService;
 import com.ltx.common.util.UserContext;
-import com.ltx.common.valid.InsertGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletResponse;
-
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -31,6 +27,7 @@ import java.util.List;
  * @author tianxing
  */
 @RestController
+@RequestMapping("/users")
 @Validated
 @Slf4j
 @RequiredArgsConstructor
@@ -46,7 +43,7 @@ public class UserController {
      * @return 通用响应对象
      */
     @PreAuthorize(hasAnyRole = "admin")
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public Result queryCurrentUser(@RequestParam("role") Role role) {
         log.info("role: {}", role);
         return Result.success().put("user", UserContext.get());
@@ -55,7 +52,7 @@ public class UserController {
     /**
      * 查询指定用户
      */
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public Result query(@PathVariable Integer id) {
         User user = userService.getUserById(id);
         return Result.success().put("user", user);
@@ -67,7 +64,7 @@ public class UserController {
      * @param requestBody 请求体
      * @return 用户列表
      */
-    @GetMapping("/users")
+    @GetMapping
     public Result queryUserList(UserRequestBody requestBody) {
         List<User> userList = userService.queryUserList(requestBody);
         return Result.success().put("userList", userList);
@@ -79,7 +76,7 @@ public class UserController {
      * @param user 用户
      * @return 用户
      */
-    @PostMapping("/users")
+    @PostMapping
     public Result add(@RequestBody User user) {
         User addUser = userService.addUser(user);
         return Result.success().put("user", addUser);
@@ -90,7 +87,7 @@ public class UserController {
      *
      * @param id 用户ID
      */
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
         userService.deleteUserById(id);
         return Result.success();
@@ -103,40 +100,10 @@ public class UserController {
      * @param user 用户
      * @return 通用响应对象
      */
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     public Result update(@PathVariable Integer id, @RequestBody User user) {
         userService.updateUser(id, user);
         return Result.success();
-    }
-
-    /**
-     * 测试国际化功能
-     */
-    @GetMapping("/test/i18n")
-    public void testInternationalization() {
-        throw new CustomException(404, "未找到");
-    }
-
-    /**
-     * 测试实体类校验功能
-     *
-     * @param requestBody 请求体
-     * @return 通用响应对象
-     */
-    @PostMapping("/test/validation")
-    public Result testValidation(@Validated(InsertGroup.class) @RequestBody UserRequestBody requestBody) {
-        return Result.success().put("requestBody", requestBody);
-    }
-
-    /**
-     * 测试单个参数校验功能
-     *
-     * @param name 名字
-     * @return 通用响应对象
-     */
-    @GetMapping("/test/validation")
-    public Result testValidation(@RequestParam("name") @Size(min = 1, max = 10) String name) {
-        return Result.success().put("name", name);
     }
 
     /**
@@ -145,7 +112,7 @@ public class UserController {
      * @param file 文件
      * @return 通用响应对象
      */
-    @PostMapping("/users/import")
+    @PostMapping("/import")
     public Result importUsers(@RequestPart("file") MultipartFile file) {
         List<User> userList = userImportService.importUsers(file);
         return Result.success().put("userList", userList);
@@ -157,7 +124,7 @@ public class UserController {
      * @param response    响应
      * @param requestBody 请求体
      */
-    @PostMapping("/users/export")
+    @PostMapping("/export")
     public void export(HttpServletResponse response, @RequestBody ExportRequestBody requestBody) {
         List<User> list = userExportService.getExportUsers();
         userExportService.export(response, list, requestBody, User.class);
@@ -169,7 +136,7 @@ public class UserController {
      * @param requestBody 请求体
      * @return 通用响应对象
      */
-    @PostMapping("/users/export/local")
+    @PostMapping("/export/local")
     public Result asyncExport(@RequestBody ExportRequestBody requestBody) {
         // 在主线程中提前获取userId(避免异步线程中ThreadLocal为空)
         Integer userId = UserContext.get().getId();
