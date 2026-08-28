@@ -4,18 +4,18 @@ Spring Boot 模板代码项目，涵盖后端开发常用功能模块的示例�
 
 ## 技术栈
 
-|  类别   |              技术              |
-|:-----:|:----------------------------:|
-|  框架   |      Spring Boot 3.5.15      |
-|  ORM  |      MyBatis-Plus 3.5.7      |
-|  数据库  |    MySQL、PostgreSQL（多数据源）    |
-|  缓存   |      Redis、Spring Cache      |
-| 分布式锁  |           Redisson           |
-| 消息队列  |           RabbitMQ           |
-| 规则引擎  |         Drools 8.44          |
-| Excel | EasyExcel 4.0.3、Apache POI 5.4.0 |
-| 模板引擎  |          Thymeleaf           |
-|  工具   |        Hutool、Lombok         |
+|   类别   |               技术                |
+|:--------:|:---------------------------------:|
+|   框架   |        Spring Boot 3.5.15         |
+|   ORM    |        MyBatis-Plus 3.5.7         |
+|  数据库  |   MySQL、PostgreSQL（多数据源）   |
+|   缓存   |        Redis、Spring Cache        |
+| 分布式锁 |             Redisson              |
+| 消息队列 |             RabbitMQ              |
+| 规则引擎 |            Drools 8.44            |
+|  Excel   | EasyExcel 4.0.3、Apache POI 5.4.0 |
+| 模板引擎 |             Thymeleaf             |
+|   工具   |          Hutool、Lombok           |
 
 ## 项目结构
 
@@ -167,27 +167,27 @@ mvn spring-boot:run
 
 ## API 接口
 
-|   方法   |           路径           |        说明         |
-|:------:|:----------------------:|:-----------------:|
-| `GET`  |      `/users/me`       | 查询当前用户信息（需要admin角色） |
-| `GET`  |     `/users/{id}`      |      查询指定用户       |
-| `GET`  |        `/users`        |   查询用户列表（支持过滤）    |
-| `POST` |        `/users`        |       新增用户        |
-| `DELETE`|     `/users/{id}`      |       删除用户        |
-| `PUT`  |     `/users/{id}`      |       更新用户        |
-| `POST` |   `/test/validation`   |     测试实体类校验功能     |
-| `GET`  |   `/test/validation`   |    测试单个参数校验功能     |
-| `GET`  |      `/test/i18n`      |      测试国际化功能      |
-| `POST` | `/users/import?engine=poi` |  使用POI库导入xlsx文件   |
-| `POST` | `/users/import?engine=easyexcel` |  使用EasyExcel库导入   |
-| `POST` |    `/users/export`     |    导出Excel(XLSX)文件到浏览器 |
-| `POST` | `/users/export/local`  |   异步导出Excel(XLSX)文件到本地 |
-| `GET`  |    `/export-tasks`     |     查询导出任务列表      |
-| `POST` |    `/files/upload`     |      单个文件上传       |
-| `POST` | `/files/batch-upload`  |      多个文件上传       |
-| `GET`  |   `/files/{fileName}`  |       文件下载        |
-| `POST` |      `/messages`       |   发送RabbitMQ消息    |
-| `POST` |       `/orders`        |     订单规则引擎计算      |
+|   方法   |               路径               |               说明                |
+|:--------:|:--------------------------------:|:---------------------------------:|
+|  `GET`   |           `/users/me`            | 查询当前用户信息（需要admin角色） |
+|  `GET`   |          `/users/{id}`           |           查询指定用户            |
+|  `GET`   |             `/users`             |     查询用户列表（支持过滤）      |
+|  `POST`  |             `/users`             |             新增用户              |
+| `DELETE` |          `/users/{id}`           |             删除用户              |
+|  `PUT`   |          `/users/{id}`           |             更新用户              |
+|  `POST`  |        `/test/validation`        |        测试实体类校验功能         |
+|  `GET`   |        `/test/validation`        |       测试单个参数校验功能        |
+|  `GET`   |           `/test/i18n`           |          测试国际化功能           |
+|  `POST`  |    `/users/import?engine=poi`    |       使用POI库导入xlsx文件       |
+|  `POST`  | `/users/import?engine=easyexcel` |        使用EasyExcel库导入        |
+|  `POST`  |         `/users/export`          |    导出Excel(XLSX)文件到浏览器    |
+|  `POST`  |      `/users/export/local`       |   异步导出Excel(XLSX)文件到本地   |
+|  `GET`   |         `/export-tasks`          |         查询导出任务列表          |
+|  `POST`  |         `/files/upload`          |           单个文件上传            |
+|  `POST`  |      `/files/batch-upload`       |           多个文件上传            |
+|  `GET`   |       `/files/{fileName}`        |             文件下载              |
+|  `POST`  |           `/messages`            |         发送RabbitMQ消息          |
+|  `POST`  |            `/orders`             |         订单规则引擎计算          |
 
 ## 配置说明
 
