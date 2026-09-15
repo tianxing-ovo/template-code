@@ -1,6 +1,5 @@
 package com.ltx.config;
 
-
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @ConfigurationProperties("thread-pool")
 @Data
-public class ThreadPoolConfigProperties {
+public class ThreadPoolProperties {
     // 核心线程数
     private int corePoolSize;
     // 最大线程数

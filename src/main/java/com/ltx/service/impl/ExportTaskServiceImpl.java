@@ -1,7 +1,7 @@
 package com.ltx.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ltx.common.constant.Constant;
+import com.ltx.config.FileStorageProperties;
 import com.ltx.entity.po.ExportTask;
 import com.ltx.entity.po.User;
 import com.ltx.enums.ExportStatus;
@@ -28,6 +28,7 @@ import java.util.Objects;
 public class ExportTaskServiceImpl implements ExportTaskService {
 
     private final ExportTaskMapper exportTaskMapper;
+    private final FileStorageProperties fileStorageProperties;
 
     /**
      * 查询当前用户的导出任务列表
@@ -70,7 +71,7 @@ public class ExportTaskServiceImpl implements ExportTaskService {
         }
         // ⌈成功⌋状态需要清理本地物理文件
         if (exportStatus == ExportStatus.SUCCESS.getValue() && exportTask.getFileName() != null) {
-            File file = Constant.DESKTOP_PATH.resolve(exportTask.getFileName()).toFile();
+            File file = fileStorageProperties.getStoragePath().resolve(exportTask.getFileName()).toFile();
             if (file.exists()) {
                 FileUtil.del(file);
             }

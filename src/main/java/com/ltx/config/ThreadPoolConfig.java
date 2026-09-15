@@ -24,7 +24,7 @@ public class ThreadPoolConfig {
      * @return 自定义线程池
      */
     @Bean("threadPoolExecutor")
-    public ThreadPoolExecutor threadPoolExecutor(ThreadPoolConfigProperties properties) {
+    public ThreadPoolExecutor threadPoolExecutor(ThreadPoolProperties properties) {
         // 任务队列: 存储待处理的任务
         LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(100000);
         // 线程工厂: 创建新线程,可以通过它自定义线程名

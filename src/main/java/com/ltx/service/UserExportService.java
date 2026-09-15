@@ -2,7 +2,7 @@ package com.ltx.service;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
-import com.ltx.common.constant.Constant;
+import com.ltx.config.FileStorageProperties;
 import com.ltx.common.easyexcel.stylestrategy.CustomCellStyleStrategy;
 import com.ltx.common.easyexcel.writehandler.CustomCellWriteHandler;
 import com.ltx.entity.po.ExportTask;
@@ -41,6 +41,7 @@ public class UserExportService {
 
     private final UserMapper userMapper;
     private final ExportTaskMapper exportTaskMapper;
+    private final FileStorageProperties fileStorageProperties;
 
     /**
      * 获取用于导出的用户列表
@@ -87,7 +88,7 @@ public class UserExportService {
      */
     private <T> void exportToLocal(List<T> list, String fileName, ExportRequestBody requestBody) {
         List<String> fieldList = requestBody.getFieldList();
-        EasyExcel.write(Constant.DESKTOP_PATH.resolve(fileName).toFile(), User.class)
+        EasyExcel.write(fileStorageProperties.getStoragePath().resolve(fileName).toFile(), User.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .registerWriteHandler(new CustomCellStyleStrategy())
                 .registerWriteHandler(new CustomCellWriteHandler())
@@ -140,7 +141,7 @@ public class UserExportService {
             // 导出到本地
             exportToLocal(userList, fileName, requestBody);
             // 获取文件大小和记录数
-            File file = Constant.DESKTOP_PATH.resolve(fileName).toFile();
+            File file = fileStorageProperties.getStoragePath().resolve(fileName).toFile();
             long fileSize = FileUtil.size(file);
             int totalRecords = userList.size();
             // 更新任务状态为⌈成功⌋

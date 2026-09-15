@@ -70,7 +70,7 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         // 配置请求权限
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/favicon.ico", "/files/**").permitAll()
+                .requestMatchers("/", "/login", "/favicon.ico", "/error").permitAll()
                 .anyRequest().authenticated());
         // 登录成功后生成一个JWS -> 设置登录成功处理器和登录失败处理器
         httpSecurity.formLogin(form -> form.successHandler((request, response, authentication) -> {

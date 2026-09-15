@@ -45,10 +45,11 @@ com.ltx
 │   ├── MybatisPlusConfig  - MyBatis-Plus分页插件配置
 │   ├── RabbitMQConfig     - RabbitMQ交换机与队列配置
 │   ├── RedisConfig        - RedisTemplate序列化配置
+│   ├── FileStorageProperties  - 本地文件存储路径配置
 │   ├── RedissonConfig     - Redisson客户端配置
 │   ├── SessionConfig      - Spring Session 分布式会话配置
 │   ├── ThreadPoolConfig   - 自定义线程池与异步任务线程池配置
-│   ├── ThreadPoolConfigProperties - 自定义线程池属性
+│   ├── ThreadPoolProperties   - 自定义线程池属性
 │   └── WebMvcConfig       - Web MVC拦截器注册与视图映射配置
 ├── controller            # 控制器 (Consolidated)
 │   ├── UserController     - 用户CRUD、分页、缓存

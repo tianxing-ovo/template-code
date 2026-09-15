@@ -2,9 +2,10 @@ package com.ltx.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.ltx.common.constant.Constant;
 import com.ltx.common.exception.CustomException;
+import com.ltx.config.FileStorageProperties;
 import com.ltx.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,10 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
+
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public String uploadFile(MultipartFile file) {
@@ -35,7 +39,12 @@ public class FileServiceImpl implements FileService {
             throw new CustomException(400, "文件名不合法");
         }
         try {
-            file.transferTo(Constant.DESKTOP_PATH.resolve(safeFileName).toFile());
+            Path storagePath = fileStorageProperties.getStoragePath();
+            Path filePath = storagePath.resolve(safeFileName).normalize();
+            if (!filePath.startsWith(storagePath)) {
+                throw new CustomException(400, "非法文件名");
+            }
+            file.transferTo(filePath.toFile());
         } catch (IOException e) {
             log.error("File upload failed: {}", safeFileName, e);
             throw new CustomException(500, "文件上传失败");
@@ -47,6 +56,7 @@ public class FileServiceImpl implements FileService {
     public String uploadFiles(MultipartFile[] files) {
         List<String> successMessageList = new ArrayList<>();
         List<String> errorMessageList = new ArrayList<>();
+        Path storagePath = fileStorageProperties.getStoragePath();
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
                 errorMessageList.add("文件为空");
@@ -58,7 +68,12 @@ public class FileServiceImpl implements FileService {
                 continue;
             }
             try {
-                file.transferTo(Constant.DESKTOP_PATH.resolve(safeFileName).toFile());
+                Path filePath = storagePath.resolve(safeFileName).normalize();
+                if (!filePath.startsWith(storagePath)) {
+                    errorMessageList.add(safeFileName + " 非法文件名");
+                    continue;
+                }
+                file.transferTo(filePath.toFile());
                 successMessageList.add(safeFileName + " 上传成功");
             } catch (IOException e) {
                 log.error("Batch file upload failed: {}", safeFileName, e);
@@ -77,7 +92,11 @@ public class FileServiceImpl implements FileService {
         if (StrUtil.isEmpty(safeFileName)) {
             throw new CustomException(400, "文件名不合法");
         }
-        Path filePath = Constant.DESKTOP_PATH.resolve(safeFileName);
+        Path storagePath = fileStorageProperties.getStoragePath();
+        Path filePath = storagePath.resolve(safeFileName).normalize();
+        if (!filePath.startsWith(storagePath)) {
+            throw new CustomException(400, "非法文件访问路径");
+        }
         if (!Files.exists(filePath)) {
             throw new CustomException(404, "文件不存在");
         }
