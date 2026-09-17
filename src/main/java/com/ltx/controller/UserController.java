@@ -6,8 +6,8 @@ import com.ltx.service.UserImportService;
 import com.ltx.common.Result;
 import com.ltx.entity.po.ExportTask;
 import com.ltx.entity.po.User;
-import com.ltx.entity.request.ExportRequestBody;
-import com.ltx.entity.request.UserRequestBody;
+import com.ltx.entity.dto.ExportRequest;
+import com.ltx.entity.dto.UserDTO;
 import com.ltx.enums.Role;
 import com.ltx.service.UserService;
 import com.ltx.common.util.UserContext;
@@ -61,12 +61,12 @@ public class UserController {
     /**
      * 查询用户列表
      *
-     * @param requestBody 请求体
+     * @param userDTO 用户数据传输对象
      * @return 用户列表
      */
     @GetMapping
-    public Result queryUserList(UserRequestBody requestBody) {
-        List<User> userList = userService.queryUserList(requestBody);
+    public Result queryUserList(UserDTO userDTO) {
+        List<User> userList = userService.queryUserList(userDTO);
         return Result.success().put("userList", userList);
     }
 
@@ -121,29 +121,29 @@ public class UserController {
     /**
      * 使用easyExcel库导出文件到浏览器
      *
-     * @param response    响应
-     * @param requestBody 请求体
+     * @param response      响应
+     * @param exportRequest 导出请求参数
      */
     @PostMapping("/export")
-    public void export(HttpServletResponse response, @RequestBody ExportRequestBody requestBody) {
+    public void export(HttpServletResponse response, @RequestBody ExportRequest exportRequest) {
         List<User> list = userExportService.getExportUsers();
-        userExportService.export(response, list, requestBody, User.class);
+        userExportService.export(response, list, exportRequest, User.class);
     }
 
     /**
      * 使用easyExcel库异步导出文件到本地
      *
-     * @param requestBody 请求体
+     * @param exportRequest 导出请求参数
      * @return 通用响应对象
      */
     @PostMapping("/export/local")
-    public Result asyncExport(@RequestBody ExportRequestBody requestBody) {
+    public Result asyncExport(@RequestBody ExportRequest exportRequest) {
         // 在主线程中提前获取userId(避免异步线程中ThreadLocal为空)
         Integer userId = UserContext.get().getId();
         // 创建⌈排队中⌋的导出任务并返回任务实体对象
-        ExportTask exportTask = userExportService.createPendingTask(requestBody, userId);
+        ExportTask exportTask = userExportService.createPendingTask(userId);
         // 异步执行导出任务
-        userExportService.asyncExport(requestBody, exportTask.getId(), exportTask.getFileName());
+        userExportService.asyncExport(exportRequest, exportTask.getId(), exportTask.getFileKey());
         return Result.success();
     }
 }

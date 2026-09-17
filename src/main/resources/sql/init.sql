@@ -4,8 +4,9 @@ create database if not exists template_code character set utf8mb4 collate utf8mb
 -- 选择数据库
 use template_code;
 
--- 删除用户表
+-- 删除用户表和导出任务表
 drop table if exists user;
+drop table if exists export_task;
 
 -- 创建用户表
 create table user
@@ -47,8 +48,7 @@ create table if not exists export_task
 (
     id            bigint auto_increment primary key comment '任务主键ID',
     user_id       int          not null comment '提交任务的用户ID',
-    file_name     varchar(255) not null comment '导出文件名',
-    file_path     varchar(512) null comment '文件下载接口相对路径或OSS下载Url',
+    file_key      varchar(255) not null comment '文件存储标识',
     file_size     bigint       null     default 0 comment '文件大小',
     total_records int          null     default 0 comment '导出的总数据条数',
     export_status tinyint      not null default 0 comment '导出状态',

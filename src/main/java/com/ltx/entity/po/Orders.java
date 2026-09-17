@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 订单实体类
@@ -15,10 +16,12 @@ import java.time.LocalDateTime;
  * @author tianxing
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("orders")
-public class Orders {
+public class Orders extends BasePO {
 
     @TableId
     private Long id;
@@ -34,8 +37,4 @@ public class Orders {
     private BigDecimal totalAmount;
 
     private Integer status;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 }

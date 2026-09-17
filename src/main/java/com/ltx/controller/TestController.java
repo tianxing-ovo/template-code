@@ -3,7 +3,7 @@ package com.ltx.controller;
 import com.ltx.common.Result;
 import com.ltx.common.exception.CustomException;
 import com.ltx.common.valid.InsertGroup;
-import com.ltx.entity.request.UserRequestBody;
+import com.ltx.entity.dto.UserDTO;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -31,12 +31,12 @@ public class TestController {
     /**
      * 测试实体类校验功能
      *
-     * @param requestBody 请求体
+     * @param userDTO 用户数据传输对象
      * @return 通用响应对象
      */
     @PostMapping("/validation")
-    public Result testValidation(@Validated(InsertGroup.class) @RequestBody UserRequestBody requestBody) {
-        return Result.success().put("requestBody", requestBody);
+    public Result testValidation(@Validated(InsertGroup.class) @RequestBody UserDTO userDTO) {
+        return Result.success().put("userDTO", userDTO);
     }
 
     /**

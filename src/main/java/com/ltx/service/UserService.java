@@ -1,7 +1,7 @@
 package com.ltx.service;
 
 import com.ltx.entity.po.User;
-import com.ltx.entity.request.UserRequestBody;
+import com.ltx.entity.dto.UserDTO;
 import java.util.List;
 
 /**
@@ -14,10 +14,10 @@ public interface UserService {
     /**
      * 查询用户列表
      *
-     * @param requestBody 请求体
+     * @param userDTO 用户数据传输对象
      * @return 用户列表
      */
-    List<User> queryUserList(UserRequestBody requestBody);
+    List<User> queryUserList(UserDTO userDTO);
 
     /**
      * 新增用户

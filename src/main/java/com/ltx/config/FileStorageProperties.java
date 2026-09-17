@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 public class FileStorageProperties {
 
     // 相对存储路径
-    private String basePath = "./data/uploads";
+    private String basePath = "./data/files";
     // 绝对存储路径
     private Path storagePath;
 

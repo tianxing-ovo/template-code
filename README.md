@@ -184,9 +184,9 @@ mvn spring-boot:run
 |  `POST`  |         `/users/export`          |    导出Excel(XLSX)文件到浏览器    |
 |  `POST`  |      `/users/export/local`       |   异步导出Excel(XLSX)文件到本地   |
 |  `GET`   |         `/export-tasks`          |         查询导出任务列表          |
-|  `POST`  |         `/files/upload`          |           单个文件上传            |
-|  `POST`  |      `/files/batch-upload`       |           多个文件上传            |
-|  `GET`   |       `/files/{fileName}`        |             文件下载              |
+|  `POST`  |             `/files`             |           单个文件上传            |
+|  `POST`  |          `/files/batch`          |           多个文件上传            |
+|  `GET`   |   `/export-tasks/{id}/download`  |         导出任务文件下载          |
 |  `POST`  |           `/messages`            |         发送RabbitMQ消息          |
 |  `POST`  |            `/orders`             |         订单规则引擎计算          |
 

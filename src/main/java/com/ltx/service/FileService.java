@@ -1,7 +1,10 @@
 package com.ltx.service;
 
+import com.ltx.entity.vo.FileUploadVO;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 文件服务接口
@@ -14,23 +17,23 @@ public interface FileService {
      * 单个文件上传
      *
      * @param file 文件
-     * @return 保存后的文件名
+     * @return 文件上传视图对象
      */
-    String uploadFile(MultipartFile file);
+    FileUploadVO uploadFile(MultipartFile file);
 
     /**
      * 多个文件上传
      *
      * @param files 文件数组
-     * @return 上传结果的消息
+     * @return 文件上传视图对象列表
      */
-    String uploadFiles(MultipartFile[] files);
+    List<FileUploadVO> uploadFiles(MultipartFile[] files);
 
     /**
-     * 获取下载文件资源
+     * 将文件作为资源加载
      *
-     * @param fileName 文件名称
+     * @param fileKey 文件相对存储标识
      * @return 文件系统资源
      */
-    FileSystemResource downloadFile(String fileName);
+    FileSystemResource loadFileAsResource(String fileKey);
 }

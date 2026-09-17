@@ -1,4 +1,4 @@
-package com.ltx.entity.request;
+package com.ltx.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ltx.enums.Sex;
@@ -13,13 +13,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 查询用户请求体
+ * 用户数据传输对象
  *
  * @author tianxing
  */
 @Data
 @Accessors(chain = true)
-public class UserRequestBody {
+public class UserDTO {
 
     @Min(1)
     @Null(message = "新增不能指定id", groups = InsertGroup.class)

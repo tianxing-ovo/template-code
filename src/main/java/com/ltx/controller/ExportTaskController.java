@@ -3,9 +3,12 @@ package com.ltx.controller;
 import com.ltx.common.Result;
 import com.ltx.service.ExportTaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author tianxing
  */
 @RestController
+@RequestMapping("/export-tasks")
 @RequiredArgsConstructor
 public class ExportTaskController {
 
@@ -24,7 +28,7 @@ public class ExportTaskController {
      *
      * @return 通用响应对象
      */
-    @GetMapping("/export-tasks")
+    @GetMapping
     public Result exportTaskList() {
         return Result.success().put("exportTaskList", exportTaskService.queryExportTaskList());
     }
@@ -35,12 +39,23 @@ public class ExportTaskController {
      * @param id 任务ID
      * @return 通用响应对象
      */
-    @DeleteMapping("/export-tasks/{id}")
+    @DeleteMapping("/{id}")
     public Result deleteExportTask(@PathVariable Long id) {
         boolean success = exportTaskService.deleteExportTask(id);
         if (success) {
             return Result.success();
         }
-        return Result.fail(400, "删除失败，任务不存在或状态不符合要求");
+        return Result.fail(400, "任务不存在或状态不符合要求");
+    }
+
+    /**
+     * 下载导出文件
+     *
+     * @param id 任务ID
+     * @return 响应实体
+     */
+    @GetMapping("/{id}/download")
+    public ResponseEntity<Resource> downloadExportFile(@PathVariable Long id) {
+        return exportTaskService.downloadExportFile(id);
     }
 }

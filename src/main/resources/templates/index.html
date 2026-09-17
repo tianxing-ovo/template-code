@@ -1088,10 +1088,6 @@
 
                 <!-- Excel 导出配置 -->
                 <div style="border-top: 1px solid var(--border-subtle); padding-top: 1.5rem;">
-                    <div class="form-group" style="margin-bottom: 1rem;">
-                        <label class="form-label" for="export-filename">导出文件名</label>
-                        <input type="text" id="export-filename" class="form-control" value="users.xlsx">
-                    </div>
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label class="form-label">选择导出字段</label>
                         <div class="field-checkbox-container">
@@ -1805,10 +1801,9 @@
 
     // 浏览器同步下载文件
     async function exportToBrowser() {
-        const fileName = document.getElementById('export-filename').value;
         const fieldList = getSelectedExportFields();
-        if (!fileName) {
-            showToast('缺少参数', '请指定导出文件名', 'error');
+        if (fieldList.length === 0) {
+            showToast('缺少参数', '请至少勾选一个导出字段', 'error');
             return;
         }
 
@@ -1817,12 +1812,22 @@
             const response = await fetch('/users/export', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({file_name: fileName, field_list: fieldList})
+                body: JSON.stringify({field_list: fieldList})
             });
 
             if (!response.ok) {
                 showToast('导出失败', '导出下载失败', 'error');
                 return;
+            }
+
+            // 从响应头解析动态文件名
+            let fileName = '用户数据.xlsx';
+            const disposition = response.headers.get('content-disposition');
+            if (disposition) {
+                const match = disposition.match(/filename\*?=(?:UTF-8'')?([^;]+)/i);
+                if (match && match[1]) {
+                    fileName = decodeURIComponent(match[1].replace(/["']/g, ''));
+                }
             }
 
             const blob = await response.blob();
@@ -1833,18 +1838,18 @@
             document.body.appendChild(a);
             a.click();
             a.remove();
+            window.URL.revokeObjectURL(url);
             showToast('导出成功', `文件 ${fileName} 已经成功保存到您的本地`, 'success');
         } catch (err) {
             showToast('导出失败', err.message, 'error');
         }
     }
 
-    // 后台异步导出到本地
+    // 后台异步导出到本地（仅传勾选字段列表）
     async function exportToLocal() {
-        const fileName = document.getElementById('export-filename').value;
         const fieldList = getSelectedExportFields();
-        if (!fileName) {
-            showToast('缺少参数', '请指定导出文件名', 'error');
+        if (fieldList.length === 0) {
+            showToast('缺少参数', '请至少勾选一个导出字段', 'error');
             return;
         }
 
@@ -1852,7 +1857,7 @@
             const response = await fetch('/users/export/local', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({file_name: fileName, field_list: fieldList})
+                body: JSON.stringify({field_list: fieldList})
             });
 
             if (response.ok) {
@@ -1900,10 +1905,10 @@
                     const fileSizeLabel = task.file_size ? formatBytes(task.file_size) : '-';
 
                     let actionButton = '-';
-                    if (task.export_status === 2 && task.file_path) {
+                    if (task.export_status === 2) {
                         actionButton = `
                                 <div class="btn-group" style="justify-content: center; display: inline-flex;">
-                                    <a href="${task.file_path}" class="btn btn-primary btn-sm" download>下载</a>
+                                    <button class="btn btn-primary btn-sm" onclick="downloadExportFile(${task.id})">下载</button>
                                     <button class="btn btn-danger btn-sm" onclick="deleteExportTask(${task.id})">删除</button>
                                 </div>
                             `;
@@ -1931,6 +1936,65 @@
             }
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    // 下载异步导出文件（仅传递任务ID，由后端解析文件名并返回流）
+    const downloadingTasks = new Set();
+    async function downloadExportFile(taskId) {
+        if (!taskId) {
+            showToast('下载失败', '未指定有效的任务ID', 'error');
+            return;
+        }
+
+        if (downloadingTasks.has(taskId)) {
+            showToast('下载中', '该文件正在拉取下载中，请稍候...', 'info');
+            return;
+        }
+
+        downloadingTasks.add(taskId);
+        showToast('开始下载', '正在拉取导出文件，请稍候...', 'info');
+        try {
+            const response = await fetch(`/export-tasks/${taskId}/download`);
+            if (!response.ok) {
+                try {
+                    const errJson = await response.json();
+                    showToast('下载失败', errJson.msg || ('下载失败: HTTP ' + response.status), 'error');
+                } catch (_) {
+                    showToast('下载失败', '文件下载失败: HTTP ' + response.status, 'error');
+                }
+                return;
+            }
+
+            // 从响应头 Content-Disposition 中提取后端生成的友好中文文件名
+            let fileName = '用户数据.xlsx';
+            const disposition = response.headers.get('content-disposition');
+            if (disposition) {
+                const utf8Match = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+                if (utf8Match && utf8Match[1]) {
+                    fileName = decodeURIComponent(utf8Match[1]);
+                } else {
+                    const normalMatch = disposition.match(/filename="?([^";]+)"?/i);
+                    if (normalMatch && normalMatch[1]) {
+                        fileName = decodeURIComponent(normalMatch[1]);
+                    }
+                }
+            }
+
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(blobUrl);
+            showToast('下载完成', `文件 ${fileName} 已成功保存到本地`, 'success');
+        } catch (err) {
+            showToast('下载失败', err.message || '网络请求异常', 'error');
+        } finally {
+            downloadingTasks.delete(taskId);
         }
     }
 

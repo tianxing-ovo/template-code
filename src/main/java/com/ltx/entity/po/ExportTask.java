@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.ToString;
 
 /**
  * 数据导出任务实体类
@@ -14,19 +14,19 @@ import java.time.LocalDateTime;
  * @author tianxing
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("export_task")
-public class ExportTask {
+public class ExportTask extends BasePO {
 
     @TableId
     private Long id;
 
     private Integer userId;
 
-    private String fileName;
-
-    private String filePath;
+    private String fileKey;
 
     private Long fileSize;
 
@@ -35,8 +35,4 @@ public class ExportTask {
     private Integer exportStatus;
 
     private String failReason;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 }

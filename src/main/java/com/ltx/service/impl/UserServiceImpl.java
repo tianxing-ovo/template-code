@@ -3,7 +3,7 @@ package com.ltx.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ltx.entity.po.User;
-import com.ltx.entity.request.UserRequestBody;
+import com.ltx.entity.dto.UserDTO;
 import com.ltx.mapper.UserMapper;
 import com.ltx.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +27,15 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + (#requestBody.id == null && #requestBody.age == null && #requestBody.name == null ? 'allUsers' : #requestBody.id + ':' + #requestBody.age + ':' + #requestBody.name)", unless = "#result == null || #result.size() == 0")
-    public List<User> queryUserList(UserRequestBody requestBody) {
+    @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + (#userDTO.id == null && #userDTO.age == null && #userDTO.name == null ? 'allUsers' : #userDTO.id + ':' + #userDTO.age + ':' + #userDTO.name)", unless = "#result == null || #result.size() == 0")
+    public List<User> queryUserList(UserDTO userDTO) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        if (requestBody != null) {
-            queryWrapper.eq(requestBody.getId() != null, User::getId, requestBody.getId());
-            queryWrapper.le(requestBody.getAge() != null, User::getAge, requestBody.getAge());
-            queryWrapper.like(StrUtil.isNotBlank(requestBody.getName()), 
+        if (userDTO != null) {
+            queryWrapper.eq(userDTO.getId() != null, User::getId, userDTO.getId());
+            queryWrapper.le(userDTO.getAge() != null, User::getAge, userDTO.getAge());
+            queryWrapper.like(StrUtil.isNotBlank(userDTO.getName()), 
                               User::getName, 
-                              StrUtil.trim(requestBody.getName()));
+                              StrUtil.trim(userDTO.getName()));
         }
         return userMapper.selectList(queryWrapper);
     }
