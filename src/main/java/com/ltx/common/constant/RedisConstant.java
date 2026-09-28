@@ -1,11 +1,15 @@
 package com.ltx.common.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Redis常量
  *
  * @author tianxing
  */
-public interface RedisConstant {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RedisConstant {
 
-    String CACHE_USER_KEY = "cache:user:";
+    public static final String CACHE_USER_KEY = "cache:user:";
 }

@@ -1,19 +1,24 @@
 package com.ltx.common.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * 常量
  *
  * @author tianxing
  */
-public interface Constant {
-    String COMMA = ",";
-    String TOKEN = "token";
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Constant {
+
+    public static final String COMMA = ",";
+    public static final String TOKEN = "token";
     // 用户
-    String USER = "user";
+    public static final String USER = "user";
     // 权限列表
-    String AUTHORITIES = "authorities";
-    long TWO_HOURS = 1000 * 60 * 60 * 2;
-    String LOGIN_TOKEN_KEY = "login:token:";
+    public static final String AUTHORITIES = "authorities";
+    public static final long TWO_HOURS = 1000 * 60 * 60 * 2L;
+    public static final String LOGIN_TOKEN_KEY = "login:token:";
     // 角色前缀
-    String ROLE_PREFIX = "ROLE_";
+    public static final String ROLE_PREFIX = "ROLE_";
 }
