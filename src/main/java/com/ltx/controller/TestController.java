@@ -1,7 +1,7 @@
 package com.ltx.controller;
 
 import com.ltx.common.Result;
-import com.ltx.common.exception.CustomException;
+import com.ltx.common.exception.BusinessException;
 import com.ltx.common.valid.InsertGroup;
 import com.ltx.entity.dto.UserDTO;
 import jakarta.validation.constraints.Size;
@@ -25,7 +25,7 @@ public class TestController {
      */
     @GetMapping("/i18n")
     public void testInternationalization() {
-        throw new CustomException(404, "未找到");
+        throw new BusinessException(404, "未找到");
     }
 
     /**

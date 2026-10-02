@@ -8,7 +8,6 @@ import com.ltx.entity.po.ExportTask;
 import com.ltx.entity.po.User;
 import com.ltx.entity.dto.ExportRequest;
 import com.ltx.entity.dto.UserDTO;
-import com.ltx.enums.Role;
 import com.ltx.service.UserService;
 import com.ltx.common.util.UserContext;
 import lombok.RequiredArgsConstructor;
@@ -38,20 +37,19 @@ public class UserController {
     private final UserImportService userImportService;
 
     /**
-     * 查询用户信息
+     * 查询当前用户
      *
      * @return 通用响应对象
      */
-    @PreAuthorize(hasAnyRole = "admin")
     @GetMapping("/me")
-    public Result queryCurrentUser(@RequestParam("role") Role role) {
-        log.info("role: {}", role);
+    public Result queryCurrentUser() {
         return Result.success().put("user", UserContext.get());
     }
 
     /**
      * 查询指定用户
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @GetMapping("/{id}")
     public Result query(@PathVariable Integer id) {
         User user = userService.getUserById(id);
@@ -64,6 +62,7 @@ public class UserController {
      * @param userDTO 用户数据传输对象
      * @return 用户列表
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @GetMapping
     public Result queryUserList(UserDTO userDTO) {
         List<User> userList = userService.queryUserList(userDTO);
@@ -76,6 +75,7 @@ public class UserController {
      * @param user 用户
      * @return 用户
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @PostMapping
     public Result add(@RequestBody User user) {
         User addUser = userService.addUser(user);
@@ -87,6 +87,7 @@ public class UserController {
      *
      * @param id 用户ID
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
         userService.deleteUserById(id);
@@ -100,6 +101,7 @@ public class UserController {
      * @param user 用户
      * @return 通用响应对象
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @PutMapping("/{id}")
     public Result update(@PathVariable Integer id, @RequestBody User user) {
         userService.updateUser(id, user);
@@ -112,6 +114,7 @@ public class UserController {
      * @param file 文件
      * @return 通用响应对象
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @PostMapping("/import")
     public Result importUsers(@RequestPart("file") MultipartFile file) {
         List<User> userList = userImportService.importUsers(file);
@@ -124,6 +127,7 @@ public class UserController {
      * @param response      响应
      * @param exportRequest 导出请求参数
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @PostMapping("/export")
     public void export(HttpServletResponse response, @RequestBody ExportRequest exportRequest) {
         List<User> list = userExportService.getExportUsers();
@@ -136,6 +140,7 @@ public class UserController {
      * @param exportRequest 导出请求参数
      * @return 通用响应对象
      */
+    @PreAuthorize(hasAnyRole = "admin")
     @PostMapping("/export/local")
     public Result asyncExport(@RequestBody ExportRequest exportRequest) {
         // 在主线程中提前获取userId(避免异步线程中ThreadLocal为空)

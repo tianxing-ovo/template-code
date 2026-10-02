@@ -22,5 +22,4 @@
     <logger name="org.springframework.jdbc" level="debug"/>
     <logger name="org.springframework.transaction" level="debug"/>
     <logger name="org.springframework.boot" level="warn"/>
-    <logger name="org.springframework.security" level="warn"/>
 </configuration>

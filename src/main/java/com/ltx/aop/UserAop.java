@@ -3,11 +3,9 @@ package com.ltx.aop;
 import com.ltx.common.annotation.PreAuthorize;
 import com.ltx.entity.po.User;
 import com.ltx.enums.ErrorCode;
-import com.ltx.enums.Role;
-import com.ltx.common.exception.CustomException;
+import com.ltx.common.exception.BusinessException;
 import com.ltx.common.util.UserContext;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
@@ -39,29 +37,25 @@ public class UserAop {
      */
     @Before("pointcut()")
     public void before() {
-        System.out.println("Before Aop");
+        log.info("Before Aop");
     }
 
     /**
      * 前置通知: 在带有指定注解的方法执行前执行
      *
-     * @param joinPoint    连接点
      * @param preAuthorize 权限校验注解
      */
     @Before("@annotation(preAuthorize)")
-    public void beforeAnnotation(JoinPoint joinPoint, PreAuthorize preAuthorize) {
-        // 获取请求参数数组
-        Object[] args = joinPoint.getArgs();
-        log.info("请求参数: {}", Arrays.toString(args));
-        // 获取注解中的角色数组
+    public void beforeAnnotation(PreAuthorize preAuthorize) {
+        // 获取允许访问的角色列表
         String[] roles = preAuthorize.hasAnyRole();
-        // 获取用户角色
-        Role role = (Role) args[0];
-        // 设置用户角色
-        UserContext.get().setRole(role);
+        // 从用户上下文中获取用户
+        User user = UserContext.get();
         // 判断用户角色是否在注解指定的角色中
-        if (!Arrays.asList(roles).contains(role.getValue())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        String role = user.getRole().getValue();
+        if (!Arrays.asList(roles).contains(role)) {
+            log.warn("用户 [{}] 角色 [{}] 无权访问该方法 需要角色: {}", user.getUsername(), role, Arrays.toString(roles));
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
     }
 
@@ -70,7 +64,7 @@ public class UserAop {
      */
     @After("pointcut()")
     public void after() {
-        System.out.println("After Aop");
+        log.info("After Aop");
     }
 
     /**
@@ -82,7 +76,7 @@ public class UserAop {
     public void afterReturning(User user) {
         // 修改返回值
         user.setName("张三");
-        System.out.println("AfterReturning Aop");
+        log.info("AfterReturning Aop");
     }
 
     /**
@@ -92,8 +86,7 @@ public class UserAop {
      */
     @AfterThrowing(value = "pointcut()", throwing = "ex")
     public void afterThrowing(Exception ex) {
-        System.out.println(ex.getMessage());
-        System.out.println("AfterThrowing Aop");
+        log.error("AfterThrowing Aop: {}", ex.getMessage());
     }
 
     /**
@@ -105,11 +98,11 @@ public class UserAop {
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         // 执行目标方法之前的操作
-        System.out.println("Before Around AOP: " + joinPoint.getSignature().getName());
+        log.info("Before Around AOP: {}", joinPoint.getSignature().getName());
         // 执行目标方法并获取返回值
         Object result = joinPoint.proceed();
         // 执行目标方法之后的操作
-        System.out.println("After Around AOP: " + joinPoint.getSignature().getName());
+        log.info("After Around AOP: {}", joinPoint.getSignature().getName());
         // 返回结果
         return result;
     }

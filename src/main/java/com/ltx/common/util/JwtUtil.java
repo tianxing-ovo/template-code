@@ -5,9 +5,7 @@ package com.ltx.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ltx.common.constant.Constant;
 import com.ltx.entity.po.User;
-import com.ltx.enums.JwsVerificationResult;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Jwt工具类
@@ -40,6 +39,8 @@ public class JwtUtil {
 
     /**
      * 生成密钥
+     *
+     * @return 密钥
      */
     public static String genSecret() {
         // 生成适合HMAC-SHA-256算法的密钥
@@ -50,22 +51,20 @@ public class JwtUtil {
     /**
      * 创建JWS
      *
-     * @param user        用户
-     * @param authorities 权限列表
-     * @param expireTime  过期时间
+     * @param user     用户
+     * @param timeout  有效时长
+     * @param timeUnit 时间单位
      * @return JWS
      */
-    public String createJws(User user, List<String> authorities, long expireTime) {
+    public String createJws(User user, long timeout, TimeUnit timeUnit) {
         // 发行时间
         Date issueDate = new Date();
         // 过期时间
-        Date expireDate = new Date(issueDate.getTime() + expireTime);
+        Date expireDate = new Date(issueDate.getTime() + timeUnit.toMillis(timeout));
         // 自定义声明
         Map<String, Object> claimMap = new HashMap<>();
         // 用户信息
         claimMap.put(Constant.USER, user);
-        // 权限列表
-        claimMap.put(Constant.AUTHORITIES, authorities);
         return Jwts.builder()
                 .json(jsonSerializer)
                 .id(UUID.randomUUID().toString())
@@ -86,22 +85,6 @@ public class JwtUtil {
         return Jwts.parser().json(jsonDeserializer).verifyWith(SECRET_KEY).build().parseSignedClaims(jws);
     }
 
-    /**
-     * 验证JWS
-     *
-     * @param jws JWS
-     * @return 验证结果枚举
-     */
-    public JwsVerificationResult verifyJws(String jws) {
-        try {
-            parseJws(jws);
-            return JwsVerificationResult.VALID;
-        } catch (ExpiredJwtException e) {
-            return JwsVerificationResult.EXPIRED;
-        } catch (Exception e) {
-            return JwsVerificationResult.INVALID;
-        }
-    }
 
     /**
      * 获取载荷

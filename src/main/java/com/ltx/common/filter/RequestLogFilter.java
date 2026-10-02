@@ -1,21 +1,22 @@
 package com.ltx.common.filter;
 
-import lombok.SneakyThrows;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
- * 自定义过滤器
+ * 请求日志过滤器
  *
  * @author tianxing
  */
 @Slf4j
-public class CustomFilter extends OncePerRequestFilter {
+public class RequestLogFilter extends OncePerRequestFilter {
 
     /**
      * 对每个请求执行一次过滤操作
@@ -25,15 +26,19 @@ public class CustomFilter extends OncePerRequestFilter {
      * @param response    响应对象
      * @param filterChain 过滤器链
      */
-    @SneakyThrows
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response, FilterChain filterChain) {
+                                    @NonNull HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         // controller处理请求前顺序执行
-        log.info("before filter");
+        long startTime = System.currentTimeMillis();
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+        log.info("[HTTP-IN] {} {}", method, uri);
         // 将请求和响应传递给下一个过滤器或目标Servlet
         filterChain.doFilter(request, response);
         // controller处理完请求并生成响应后逆序执行
-        log.info("after filter");
+        long cost = System.currentTimeMillis() - startTime;
+        log.info("[HTTP-OUT] {} {} | 状态码: {} | 耗时: {}ms", method, uri, response.getStatus(), cost);
     }
 }

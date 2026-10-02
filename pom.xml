@@ -19,6 +19,19 @@
         <maven.compiler.target>17</maven.compiler.target>
         <commons-io.version>2.16.1</commons-io.version>
         <commons-compress.version>1.26.1</commons-compress.version>
+        <logback.version>1.6.4</logback.version>
+        <log4j2.version>2.26.1</log4j2.version>
+        <httpcore5.version>5.4.4</httpcore5.version>
+        <httpclient5.version>5.6.4</httpclient5.version>
+        <jackson-bom.version>2.21.7</jackson-bom.version>
+        <mysql.version>26.7.0</mysql.version>
+        <postgresql.version>42.7.13</postgresql.version>
+        <tomcat.version>10.1.60</tomcat.version>
+        <netty.version>4.1.138.Final</netty.version>
+        <spring-amqp.version>3.2.12</spring-amqp.version>
+        <rabbit-amqp-client.version>5.37.0</rabbit-amqp-client.version>
+        <micrometer.version>1.16.7</micrometer.version>
+        <reactor-bom.version>2025.0.7</reactor-bom.version>
     </properties>
     <dependencies>
         <dependency>
@@ -54,7 +67,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--spring-session-redis,使用Redis存储session-->
+        <!--使用Redis存储session-->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
@@ -64,6 +77,16 @@
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>3.25.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.marshalling</groupId>
+                    <artifactId>jboss-marshalling</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.marshalling</groupId>
+                    <artifactId>jboss-marshalling-river</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--mybatis-plus-->
         <dependency>
@@ -200,6 +223,14 @@
             <version>5.5.0</version>
             <exclusions>
                 <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.apache.shardingsphere</groupId>
                     <artifactId>shardingsphere-test-util</artifactId>
                 </exclusion>
@@ -217,10 +248,6 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.25.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
 

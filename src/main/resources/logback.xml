@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <logger name="org.springframework" level="warn"/>
-    <logger name="org.apache.tomcat" level="warn"/>
-    <logger name="org.apache.catalina" level="warn"/>
-    <logger name="org.mybatis" level="warn"/>
-    <logger name="com.baomidou.mybatisplus" level="warn"/>
-    <logger name="com.ltx" level="debug"/>
-    <logger name="com.zaxxer.hikari.HikariDataSource" level="off"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- 每次启动项目自动清空历史文件并覆盖写入最新日志 -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/app.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 开启过滤器与容器调试日志 -->
+    <logger name="org.springframework.boot.web.servlet" level="DEBUG"/>
+    <logger name="org.apache.catalina.core" level="DEBUG"/>
+
+    <!-- 项目业务调试日志 -->
+    <logger name="com.ltx" level="DEBUG"/>
+
+    <!-- 第三方开源框架日志降噪避免刷屏 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache.tomcat" level="WARN"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+    <logger name="org.mybatis" level="WARN"/>
+    <logger name="com.baomidou.mybatisplus" level="WARN"/>
+    <logger name="com.zaxxer.hikari.HikariDataSource" level="OFF"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
 </configuration>

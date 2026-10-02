@@ -2,7 +2,7 @@ package com.ltx.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ltx.common.exception.CustomException;
+import com.ltx.common.exception.BusinessException;
 import com.ltx.common.util.UserContext;
 import com.ltx.config.FileStorageProperties;
 import com.ltx.entity.po.ExportTask;
@@ -87,7 +87,7 @@ public class ExportTaskServiceImpl implements ExportTaskService {
                 .eq(ExportTask::getUserId, userId)
                 .eq(ExportTask::getExportStatus, ExportStatus.SUCCESS.getValue()));
         if (exportTask == null) {
-            throw new CustomException(404, "导出文件不存在或任务尚未完成");
+            throw new BusinessException(404, "导出文件不存在或任务尚未完成");
         }
         // 获取导出文件
         File file = fileStorageProperties.getStoragePath().resolve(exportTask.getFileKey()).toFile();

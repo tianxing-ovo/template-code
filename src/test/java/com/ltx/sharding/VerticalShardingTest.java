@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.ltx.enums.Role;
 import com.ltx.enums.Sex;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import cn.hutool.crypto.digest.BCrypt;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,13 +31,11 @@ public class VerticalShardingTest {
 
     private final UserMapper userMapper;
     private final OrdersMapper ordersMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public VerticalShardingTest(UserMapper userMapper, OrdersMapper ordersMapper, PasswordEncoder passwordEncoder) {
+    public VerticalShardingTest(UserMapper userMapper, OrdersMapper ordersMapper) {
         this.userMapper = userMapper;
         this.ordersMapper = ordersMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Test
@@ -58,7 +56,7 @@ public class VerticalShardingTest {
         user.setUsername("user");
         user.setAge(28);
         user.setSex(Sex.MAN);
-        user.setPassword(passwordEncoder.encode("123456"));
+        user.setPassword(BCrypt.hashpw("123456"));
         user.setHobbies(List.of("篮球", "音乐"));
         user.setProvince("上海市");
         user.setCity("上海");

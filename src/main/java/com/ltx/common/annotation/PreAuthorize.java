@@ -13,5 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PreAuthorize {
-    String[] hasAnyRole();
+
+    /**
+     * 允许访问的角色列表(具备任一角色即可访问)
+     *
+     * @return 允许访问的角色列表
+     */
+    String[] hasAnyRole() default {};
 }

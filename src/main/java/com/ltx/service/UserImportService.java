@@ -3,7 +3,6 @@ package com.ltx.service;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ltx.entity.po.User;
-import com.ltx.common.exception.CustomException;
 import com.ltx.listener.UserListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,8 @@ public class UserImportService {
             // 读取Excel文件
             EasyExcel.read(inputStream, User.class, userListener).sheet().doRead();
         } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new CustomException(500, e.getMessage());
+            log.error("读取Excel文件失败: {}", e.getMessage(), e);
+            throw new RuntimeException("读取Excel文件失败", e);
         }
         // 从监听器中获取用户列表
         List<User> userList = userListener.getUserList();

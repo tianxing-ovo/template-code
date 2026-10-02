@@ -4,3 +4,5 @@ common-template.iml
 HELP.md
 mvnw
 mvnw.cmd
+logs/
+*.log

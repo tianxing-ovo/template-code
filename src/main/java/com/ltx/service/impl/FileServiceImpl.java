@@ -3,7 +3,7 @@ package com.ltx.service.impl;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.ltx.common.exception.CustomException;
+import com.ltx.common.exception.BusinessException;
 import com.ltx.config.FileStorageProperties;
 import com.ltx.entity.vo.FileUploadVO;
 import com.ltx.service.FileService;
@@ -46,17 +46,17 @@ public class FileServiceImpl implements FileService {
     public FileUploadVO uploadFile(MultipartFile file) {
         // 校验文件是否为空
         if (file == null || file.isEmpty()) {
-            throw new CustomException(400, "文件为空");
+            throw new BusinessException(400, "文件为空");
         }
         // 校验文件名是否为空
         String originalFilename = FileUtil.getName(file.getOriginalFilename());
         if (StrUtil.isBlank(originalFilename)) {
-            throw new CustomException(400, "文件名不合法");
+            throw new BusinessException(400, "文件名不合法");
         }
         // 校验文件扩展名是否在允许列表中
         String extName = FileUtil.extName(originalFilename).toLowerCase(Locale.ROOT);
         if (!ALLOWED_EXTENSIONS.contains(extName)) {
-            throw new CustomException(400, "不支持的文件类型: " + extName);
+            throw new BusinessException(400, "不支持的文件类型: " + extName);
         }
         // 生成按日期划分的上传子目录
         String dateSubDir = "upload/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
@@ -73,7 +73,7 @@ public class FileServiceImpl implements FileService {
             Path filePath = targetDir.resolve(newFileName).normalize();
             // 校验文件路径是否在存储路径下
             if (!filePath.startsWith(storagePath)) {
-                throw new CustomException(400, "非法文件存储路径");
+                throw new BusinessException(400, "非法文件存储路径");
             }
             file.transferTo(filePath.toFile());
             // 返回相对路径标识与原始文件名
@@ -81,14 +81,14 @@ public class FileServiceImpl implements FileService {
             return new FileUploadVO(fileKey, originalFilename);
         } catch (IOException e) {
             log.error("File upload failed: {}", originalFilename, e);
-            throw new CustomException(500, "文件上传失败");
+            throw new RuntimeException("文件上传失败", e);
         }
     }
 
     @Override
     public List<FileUploadVO> uploadFiles(MultipartFile[] files) {
         if (files == null || files.length == 0) {
-            throw new CustomException(400, "文件列表为空");
+            throw new BusinessException(400, "文件列表为空");
         }
         List<FileUploadVO> fileList = new ArrayList<>(files.length);
         for (MultipartFile file : files) {
@@ -100,15 +100,15 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileSystemResource loadFileAsResource(String fileKey) {
         if (StrUtil.isBlank(fileKey)) {
-            throw new CustomException(400, "文件标识不合法");
+            throw new BusinessException(400, "文件标识不合法");
         }
         Path storagePath = fileStorageProperties.getStoragePath();
         Path filePath = storagePath.resolve(fileKey).normalize();
         if (!filePath.startsWith(storagePath)) {
-            throw new CustomException(400, "非法文件访问路径");
+            throw new BusinessException(400, "非法文件访问路径");
         }
         if (!Files.exists(filePath)) {
-            throw new CustomException(404, "文件不存在");
+            throw new BusinessException(404, "文件不存在");
         }
         return new FileSystemResource(filePath);
     }

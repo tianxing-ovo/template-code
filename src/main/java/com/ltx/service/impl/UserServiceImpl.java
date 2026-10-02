@@ -9,7 +9,7 @@ import com.ltx.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import cn.hutool.crypto.digest.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +24,6 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Cacheable(value = "userCache", key = "T(com.ltx.common.constant.RedisConstant).CACHE_USER_KEY + (#userDTO.id == null && #userDTO.age == null && #userDTO.name == null ? 'allUsers' : #userDTO.id + ':' + #userDTO.age + ':' + #userDTO.name)", unless = "#result == null || #result.size() == 0")
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
         String password = user.getPassword();
         // 对密码进行加密
         if (StrUtil.isNotBlank(password)) {
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(BCrypt.hashpw(password));
         }
         userMapper.insert(user);
         return user;
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
         String password = user.getPassword();
         // 对密码进行加密
         if (StrUtil.isNotBlank(password)) {
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(BCrypt.hashpw(password));
         }
         userMapper.updateById(user);
     }

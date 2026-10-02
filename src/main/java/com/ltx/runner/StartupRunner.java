@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import cn.hutool.crypto.digest.BCrypt;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -28,7 +28,6 @@ import java.util.Collections;
 public class StartupRunner implements CommandLineRunner {
 
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -40,7 +39,7 @@ public class StartupRunner implements CommandLineRunner {
             User admin = new User();
             admin.setName("系统管理员");
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("123456"));
+            admin.setPassword(BCrypt.hashpw("123456"));
             admin.setRole(Role.ADMIN);
             admin.setSex(Sex.MAN);
             admin.setAge(25);

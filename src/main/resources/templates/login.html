@@ -198,21 +198,20 @@
 
         .card-header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
 
         .logo-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--primary-glow);
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            box-shadow: 0 0 24px var(--primary-glow);
+            margin-bottom: 0;
         }
 
         .card-title {
@@ -356,23 +355,25 @@
     <!-- 登录面板 -->
     <div class="glass-card">
         <div class="card-header">
-            <div class="logo-badge">LTX</div>
-            <h1 class="card-title">Template Code</h1>
-            <p class="card-subtitle">请登录您的控制台账号</p>
+            <div class="logo-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 26px; height: 26px; color: #fff;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+            </div>
         </div>
 
         <form id="login-form" onsubmit="handleLogin(arguments[0])">
             <div class="form-group">
                 <label class="form-label" for="username">用户名</label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" class="form-control" placeholder="请输入您的账号" required autocomplete="username">
+                    <input type="text" id="username" class="form-control" placeholder="请输入用户名" required autocomplete="username">
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 2rem;">
                 <label class="form-label" for="password">密码</label>
                 <div class="input-wrapper">
-                    <input type="password" id="password" class="form-control" placeholder="请输入您的密码" required autocomplete="current-password">
+                    <input type="password" id="password" class="form-control" placeholder="请输入密码" required autocomplete="current-password">
                 </div>
             </div>
 
@@ -468,11 +469,10 @@
             submitBtn.innerHTML = '<span class="spinner"></span> <span>正在登录...</span>';
             
             try {
-                // Spring Security 的 formLogin 默认使用 x-www-form-urlencoded
                 const bodyParams = new URLSearchParams();
                 bodyParams.append('username', username);
                 bodyParams.append('password', password);
-                
+                // 使用表单提交登录
                 const response = await fetch('/login', {
                     method: 'POST',
                     headers: {
@@ -480,25 +480,25 @@
                     },
                     body: bodyParams
                 });
-
+                // 检查网络响应状态
                 if (!response.ok) {
-                    showToast('登录失败', '网络请求异常，服务器响应 ' + response.status, 'error');
+                    showToast('登录失败', `网络请求异常 HTTP ${response.status}`, 'error');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span>立即登录</span>';
                     return;
                 }
-
+                // 获取响应结果
                 const result = await response.json();
-                
+                // 检查响应状态码
                 if (result.code === 200) {
-                    showToast('登录成功', '正在为您跳转...', 'success');
-                    // 存储 token 并在一秒后跳转
+                    showToast('登录成功', '正在为您跳转', 'success');
+                    // 存储token并在一秒后跳转
                     localStorage.setItem('token', result['data']['token']);
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1000);
                 } else {
-                    showToast('登录失败', result.msg || '登录校验失败，请检查账号密码！', 'error');
+                    showToast('登录失败', result.message, 'error');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span>立即登录</span>';
                 }

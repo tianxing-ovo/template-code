@@ -1,12 +1,19 @@
+-- 设置会话字符集
+set names utf8mb4;
+
 -- 创建数据库
 create database if not exists template_code character set utf8mb4 collate utf8mb4_general_ci;
 
--- 选择数据库
+-- 切换数据库
 use template_code;
 
--- 删除用户表和导出任务表
+-- 删除表
 drop table if exists user;
+drop table if exists orders;
 drop table if exists export_task;
+drop table if exists temp;
+drop table if exists message_0;
+drop table if exists message_1;
 
 -- 创建用户表
 create table user
@@ -15,8 +22,8 @@ create table user
     name                    varchar(50)  not null default '' comment '姓名',
     username                varchar(50)  not null comment '用户名',
     age                     int          not null default 0 comment '年龄',
-    sex                     tinyint      not null default 0 comment '性别 (0-未知, 1-男, 2-女)',
-    password                varchar(100) not null comment '密码',
+    sex                     tinyint      not null default 3 comment '性别 (1-男, 2-女, 3-未知)',
+    password                varchar(100) not null comment '密码 (Bcrypt加密)',
     hobbies                 json         null comment '兴趣爱好列表',
     province                varchar(50)  not null default '' comment '省份',
     address                 varchar(255) not null default '' comment '地址',
@@ -24,7 +31,7 @@ create table user
     description             varchar(255) null comment '描述',
     create_time             datetime     not null default current_timestamp comment '创建时间',
     update_time             datetime     not null default current_timestamp on update current_timestamp comment '更新时间',
-    role                    varchar(50)  not null default 'ROLE_USER' comment '角色',
+    role                    varchar(50)  not null default 'user' comment '角色 (admin-管理员, user-普通用户)',
     account_non_expired     tinyint(1)   not null default 1 comment '账户未过期',
     account_non_locked      tinyint(1)   not null default 1 comment '账户未锁定',
     credentials_non_expired tinyint(1)   not null default 1 comment '密码未过期',
@@ -33,18 +40,24 @@ create table user
 ) engine = InnoDB
   default charset = utf8mb4 comment ='用户表';
 
--- 创建临时风险表
-create table if not exists temp
+-- 创建订单表
+create table orders
 (
-    id           int auto_increment comment '主键ID' primary key,
-    service_name varchar(255)  null comment '服务名称',
-    risk_type    varchar(50)   null comment '风险类型',
-    person       varchar(1000) null comment '相关人员列表'
+    id           bigint auto_increment primary key comment '主键ID',
+    order_no     varchar(50)                                                    not null comment '订单号',
+    product_name varchar(100)                                                   not null comment '商品名称',
+    price        decimal(10, 2)                                                 not null comment '商品单价',
+    quantity     int                                                            not null comment '购买数量',
+    total_amount decimal(10, 2)                                                 not null comment '订单总金额',
+    status       tinyint  default 0                                             not null comment '状态',
+    create_time  datetime default current_timestamp                             not null comment '创建时间',
+    update_time  datetime default current_timestamp on update current_timestamp not null comment '更新时间',
+    unique key uk_order_no (order_no)
 ) engine = InnoDB
-  default charset = utf8mb4 comment ='临时风险表';
+  default charset = utf8mb4 comment ='订单表';
 
--- 创建数据导出任务表
-create table if not exists export_task
+-- 创建导出任务表
+create table export_task
 (
     id            bigint auto_increment primary key comment '任务主键ID',
     user_id       int          not null comment '提交任务的用户ID',
@@ -57,3 +70,34 @@ create table if not exists export_task
     update_time   datetime     not null default current_timestamp on update current_timestamp comment '任务最后修改时间'
 ) engine = InnoDB
   default charset = utf8mb4 comment ='数据导出任务表';
+
+-- 创建临时风险表
+create table temp
+(
+    id           int auto_increment comment '主键ID' primary key,
+    service_name varchar(255)  null comment '服务名称',
+    risk_type    varchar(50)   null comment '风险类型',
+    person       varchar(1000) null comment '相关人员列表'
+) engine = InnoDB
+  default charset = utf8mb4 comment ='临时风险表';
+
+
+-- 创建消息分表0
+create table message_0
+(
+    id          bigint       not null primary key comment '主键',
+    title       varchar(100) not null default '' comment '标题',
+    content     varchar(500) null comment '内容',
+    create_time datetime     not null default current_timestamp comment '创建时间'
+) engine = InnoDB
+  default charset = utf8mb4 comment ='消息分表0';
+
+-- 创建消息分表1
+create table message_1
+(
+    id          bigint       not null primary key comment '主键',
+    title       varchar(100) not null default '' comment '标题',
+    content     varchar(500) null comment '内容',
+    create_time datetime     not null default current_timestamp comment '创建时间'
+) engine = InnoDB
+  default charset = utf8mb4 comment ='消息分表1';

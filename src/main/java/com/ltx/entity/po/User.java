@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ltx.common.annotation.SensitiveInfo;
 import com.ltx.common.easyexcel.converter.ListConverter;
 import com.ltx.common.easyexcel.converter.RoleConverter;
@@ -48,8 +49,7 @@ public class User {
     @ExcelProperty(value = "性别", converter = SexConverter.class)
     @ColumnWidth(8)
     private Sex sex;
-    @ExcelProperty(value = "密码")
-    @ColumnWidth(12)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @ExcelProperty(value = "兴趣爱好", converter = ListConverter.class)
     @TableField(typeHandler = JacksonTypeHandler.class)

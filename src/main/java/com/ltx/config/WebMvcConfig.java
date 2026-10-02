@@ -1,7 +1,7 @@
 package com.ltx.config;
 
 import com.ltx.common.i18n.MyLocaleResolver;
-import com.ltx.common.interceptor.CustomInterceptor;
+import com.ltx.common.interceptor.UserContextInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final CustomInterceptor customInterceptor;
+    private final UserContextInterceptor userContextInterceptor;
 
     /**
      * 添加拦截器
@@ -31,9 +31,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(customInterceptor)
-                .addPathPatterns("/**").
-                excludePathPatterns("/login").order(0);
+        registry.addInterceptor(userContextInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/login",
+                        "/logout",
+                        "/",
+                        "/favicon.ico",
+                        "/error",
+                        "/css/**",
+                        "/js/**"
+                ).order(0);
     }
 
     /**
@@ -47,9 +55,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // index.html是默认页面 -> 可以不配置 -> 放到static和templates中即可直接访问
         registry.addViewController("/").setViewName("index");
-        registry.addViewController("/login").setViewName("login");
     }
-
 
     /**
      * 注册自定义的LocaleResolver

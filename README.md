@@ -29,9 +29,9 @@ com.ltx
 │   ├── constant/         # 通用常量定义 (Constant, DatasourceConstant, RedisConstant)
 │   ├── easyexcel/        # EasyExcel 格式转换与写入策略
 │   ├── exception/        # 异常定义与全局异常处理
-│   ├── filter/           # 自定义过滤器 (CustomFilter)
+│   ├── filter/           # 容器过滤器 (RequestLogFilter)
 │   ├── i18n/             # 国际化 Locale 解析与资源工具
-│   ├── interceptor/      # 用户信息拦截器 (CustomInterceptor)
+│   ├── interceptor/      # 用户上下文拦截器 (UserContextInterceptor)
 │   ├── typehandler/      # MyBatis 类型转换器 (ListTypeHandler)
 │   ├── util/             # 常用工具类 (Redis, Redisson, Thread, UserContext)
 │   ├── valid/            # 自定义数据校验逻辑
@@ -52,6 +52,7 @@ com.ltx
 │   ├── ThreadPoolProperties  # 自定义线程池属性
 │   └── WebMvcConfig      # Web MVC拦截器注册与视图映射配置
 ├── controller            # 控制器
+│   ├── AuthController    # 用户登录与登出认证
 │   ├── UserController    # 用户CRUD、分页、缓存
 │   ├── ExportTaskController # 导出任务管理
 │   ├── FileController    # 文件上传下载
@@ -184,6 +185,8 @@ mvn spring-boot:run
 
 |   方法   |               路径               |               说明                |
 |:--------:|:--------------------------------:|:---------------------------------:|
+|  `POST`  |             `/login`             |       用户登录（返回Token）       |
+|  `POST`  |            `/logout`             |       用户退出（注销Token）       |
 |  `GET`   |           `/users/me`            | 查询当前用户信息（需要admin角色） |
 |  `GET`   |          `/users/{id}`           |           查询指定用户            |
 |  `GET`   |             `/users`             |     查询用户列表（支持过滤）      |
@@ -210,16 +213,16 @@ mvn spring-boot:run
 HTTP 请求
   │
   ▼
-Filter (CustomFilter)                     ← Servlet 容器过滤器链 (顺序执行)
+Filter (RequestLogFilter)                 ← Servlet 容器过滤器 (记录[HTTP-IN]与请求起始时间)
   │
   ▼
 DispatcherServlet                         ← Spring MVC 核心分发器 (请求路由寻址)
   │
   ▼
-Interceptor.preHandle                     ← 拦截器前置处理 (存入用户信息到 ThreadLocal)
+Interceptor.preHandle (UserContextInterceptor) ← 拦截器前置处理 (Token校验与存入用户信息到ThreadLocal)
   │
   ▼
-AOP @Around (前半部) / @Before             ← 切面前置增强 / 权限校验 (@PreAuthorize)
+AOP @Around (前半部) / @Before (UserAop)   ← 切面前置增强 / 自定义权限校验 (@PreAuthorize)
   │
   ▼
 Controller                                ← 控制器执行业务逻辑
@@ -237,10 +240,10 @@ HttpMessageConverter (JSON 序列化)        │
 Interceptor.postHandle (正常时执行) ─────-┘ (抛异常时不执行)
   │
   ▼
-Interceptor.afterCompletion               ← 拦截器完成回调 (清理 ThreadLocal 保证执行)
+Interceptor.afterCompletion (UserContextInterceptor) ← 拦截器完成回调 (清理ThreadLocal保证执行)
   │
   ▼
-Filter (CustomFilter)                     ← Servlet 容器过滤器链 (逆序执行)
+Filter (RequestLogFilter)                 ← Servlet 容器过滤器 (输出[HTTP-OUT]与耗时统计)
   │
   ▼
 HTTP 响应 (JSON)

@@ -1,4 +1,4 @@
-// 拦截全局fetch请求
+    // 拦截全局fetch请求
     const originalFetch = window.fetch;
     window.fetch = async function (url, options = {}) {
         options.headers = options.headers || {};
@@ -11,7 +11,7 @@
             const clone = response.clone();
             try {
                 const json = await clone.json();
-                if ([203, 204, 205, 206, 207].includes(json.code)) {
+                if ([203, 204, 205, 206, 207, 208, 209].includes(json.code)) {
                     localStorage.removeItem('token');
                     window.location.href = '/login';
                 }
@@ -91,7 +91,6 @@
 
     // 退出登录
     async function logout() {
-        if (!confirm('确定要退出登录吗？')) return;
         try {
             await fetch('/logout', {method: 'POST'});
         } catch (err) {
@@ -190,7 +189,7 @@
             const result = await response.json();
 
             if (result.code !== 200) {
-                showToast('加载用户失败', result.msg || '加载用户列表失败', 'error');
+                showToast('加载用户失败', result.message, 'error');
                 return;
             }
 
@@ -356,7 +355,7 @@
             const response = await fetch(`/users/${id}`);
             const result = await response.json();
             if (result.code !== 200) {
-                showToast('获取详情失败', result.msg || '获取用户详情失败', 'error');
+                showToast('获取详情失败', result.message, 'error');
                 return;
             }
             const user = result.data['user'];
@@ -466,7 +465,7 @@
             if (result.code === 200) {
                 showToast('上传成功', `文件 ${file.name} 已保存到服务器桌面！`, 'success');
             } else {
-                showToast('文件上传失败', result.msg, 'error');
+                showToast('文件上传失败', result.message, 'error');
             }
         } catch (err) {
             showToast('文件上传失败', err.message, 'error');
@@ -489,9 +488,9 @@
             });
             const result = await response.json();
             if (result.code === 200) {
-                showToast('批量上传成功', result.msg, 'success');
+                showToast('批量上传成功', result.message, 'success');
             } else {
-                showToast('批量上传失败', result.msg, 'error');
+                showToast('批量上传失败', result.message, 'error');
             }
         } catch (err) {
             showToast('批量上传失败', err.message, 'error');
@@ -522,7 +521,7 @@
                 fileInput.value = '';
                 await loadUsers();
             } else {
-                showToast('导入失败', result.msg, 'error');
+                showToast('导入失败', result.message, 'error');
             }
         } catch (err) {
             showToast('导入失败', err.message, 'error');
@@ -695,7 +694,7 @@
             if (!response.ok) {
                 try {
                     const errJson = await response.json();
-                    showToast('下载失败', errJson.msg || ('下载失败: HTTP ' + response.status), 'error');
+                    showToast('下载失败', errJson.message || ('下载失败 HTTP ' + response.status), 'error');
                 } catch (_) {
                     showToast('下载失败', '文件下载失败: HTTP ' + response.status, 'error');
                 }
@@ -744,7 +743,7 @@
                 showToast('删除成功', `任务 ${id} 已被删除`, 'success');
                 await loadExportTasks();
             } else {
-                showToast('操作失败', result.msg || '删除失败', 'error');
+                showToast('操作失败', result.message, 'error');
             }
         } catch (err) {
             showToast('操作失败', err.message, 'error');

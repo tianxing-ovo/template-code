@@ -7,24 +7,24 @@ import lombok.Getter;
 import java.io.Serial;
 
 /**
- * 自定义异常
+ * 业务异常
  *
  * @author tianxing
  */
 @Getter
 @AllArgsConstructor
-public class CustomException extends RuntimeException {
+public class BusinessException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final int code;
 
-    public CustomException(int code, String message) {
+    public BusinessException(int code, String message) {
         super(message);
         this.code = code;
     }
 
-    public CustomException(ErrorCode errorCode) {
+    public BusinessException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.code = errorCode.getCode();
     }
